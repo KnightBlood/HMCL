@@ -1,0 +1,15 @@
+[package]
+name = "hmcl-rs"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+ferro-app = { git = "https://github.com/wieslawsoltes/FerroUI" }
+ferro-core = { git = "https://github.com/wieslawsoltes/FerroUI" }
+ferro-ui = { git = "https://github.com/wieslawsoltes/FerroUI" }
+winit = "0.30" 
+ferro-windowing = { git = "https://github.com/wieslawsoltes/FerroUI" } 
+
+[workspace]
+resolver = "2"

@@ -10,13 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.3.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.3.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.3.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.3.0" />
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HMCLCore.NET\HMCLCore.NET.csproj" />
   </ItemGroup>
 </Project>

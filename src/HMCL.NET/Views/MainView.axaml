@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="HMCL.NET.Views.MainView">
+    <Grid RowDefinitions="Auto,*">
+        <Border Background="#2B579A" Height="40">
+            <TextBlock Text="HMCL.NET" Foreground="White" VerticalAlignment="Center" Margin="12,0"/>
+        </Border>
+        <Grid Grid.Row="1" ColumnDefinitions="200,*">
+            <ListBox Background="#F5F5F5">
+                <ListBoxItem Content="游戏列表"/>
+                <ListBoxItem Content="下载"/>
+                <ListBoxItem Content="多账户"/>
+                <ListBoxItem Content="设置"/>
+                <ListBoxItem Content="更多"/>
+            </ListBox>
+            <ContentControl Grid.Column="1" Margin="12">
+                <TextBlock Text="欢迎使用 HMCL.NET (Avalonia 12.x)" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</UserControl>

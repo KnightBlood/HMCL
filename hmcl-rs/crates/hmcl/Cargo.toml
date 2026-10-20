@@ -1,0 +1,18 @@
+[package]
+name = "hmcl"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "hmcl"
+path = "src/main.rs"
+
+[dependencies]
+hmcl-core.workspace = true
+
+# The facade selects the desktop platform (Skia and HarfBuzz) and the Fluent
+# theme by default; `xaml` adds the run-time XAML loader the main window is
+# loaded with.
+ferroui = { workspace = true, features = ["xaml"] }

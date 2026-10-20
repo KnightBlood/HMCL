@@ -67,6 +67,10 @@ language-subtag-registry
 # vscode
 .vscode/
 
+# dotnet
+/src/**/bin/
+/src/**/obj/
+
 # test
 /hmcl.json
 /.hmcl.json

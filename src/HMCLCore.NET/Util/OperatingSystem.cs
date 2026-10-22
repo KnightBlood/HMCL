@@ -4,32 +4,42 @@ using System.Runtime.InteropServices;
 namespace HMCLCore.NET.Util;
 
 /// <summary>
-/// Operating system detection.
+/// Operating system detection utilities.
 /// </summary>
-public static class OperatingSystem
+public static class OsDetection
 {
-    public static readonly OsType CurrentOs = GetCurrentOs();
+    /// <summary>
+    /// Returns the operating system of the running process.
+    /// </summary>
+    public static OsType CurrentOs => Platform.CurrentOs;
 
-    public static bool IsWindows => CurrentOs == OsType.Windows;
-    public static bool IsLinux => CurrentOs == OsType.Linux;
-    public static bool IsMacOs => CurrentOs == OsType.MacOs;
+    /// <summary>
+    /// Returns whether this is a Windows system.
+    /// </summary>
+    public static bool IsWindows => Platform.CurrentOs == OsType.Windows;
 
+    /// <summary>
+    /// Returns whether this is a Linux system.
+    /// </summary>
+    public static bool IsLinux => Platform.CurrentOs == OsType.Linux;
+
+    /// <summary>
+    /// Returns whether this is a macOS system.
+    /// </summary>
+    public static bool IsMacOs => Platform.CurrentOs == OsType.MacOs;
+
+    /// <summary>
+    /// Returns whether this is a FreeBSD system.
+    /// </summary>
+    public static bool IsFreeBsd => Platform.CurrentOs == OsType.FreeBsd;
+
+    /// <summary>
+    /// Returns the OS description.
+    /// </summary>
     public static string SystemName => RuntimeInformation.OSDescription;
+
+    /// <summary>
+    /// Returns the OS version.
+    /// </summary>
     public static string SystemVersion => Environment.OSVersion.Version.ToString();
-
-    private static OsType GetCurrentOs()
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return OsType.Windows;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return OsType.MacOs;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return OsType.Linux;
-        return OsType.Unknown;
-    }
-
-    public enum OsType
-    {
-        Windows,
-        Linux,
-        MacOs,
-        Unknown
-    }
 }

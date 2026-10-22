@@ -1,21 +1,246 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:HMCL.NET.Views"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:auth="clr-namespace:HMCLCore.NET.Auth;assembly=HMCLCore.NET"
+             xmlns:game="clr-namespace:HMCLCore.NET.Game;assembly=HMCLCore.NET"
+             xmlns:controls="clr-namespace:HMCL.NET.Controls"
+             xmlns:animation="using:Avalonia.Animation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+             x:DataType="vm:MainWindowViewModel"
              x:Class="HMCL.NET.Views.MainView">
-    <Grid RowDefinitions="Auto,*">
-        <Border Background="#2B579A" Height="40">
-            <TextBlock Text="HMCL.NET" Foreground="White" VerticalAlignment="Center" Margin="12,0"/>
-        </Border>
-        <Grid Grid.Row="1" ColumnDefinitions="200,*">
-            <ListBox Background="#F5F5F5">
-                <ListBoxItem Content="游戏列表"/>
-                <ListBoxItem Content="下载"/>
-                <ListBoxItem Content="多账户"/>
-                <ListBoxItem Content="设置"/>
-                <ListBoxItem Content="更多"/>
-            </ListBox>
-            <ContentControl Grid.Column="1" Margin="12">
-                <TextBlock Text="欢迎使用 HMCL.NET (Avalonia 12.x)" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </ContentControl>
+
+    <UserControl.Styles>
+        <!-- Java HMCL AdvancedListItem-like navigation button. -->
+        <Style Selector="Button.nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <!-- The items of the navigation show their background when the mouse
+             is over them. -->
+        <Style Selector="Button.nav:pointerover">
+            <Setter Property="Background" Value="#22808080"/>
+        </Style>
+        <Style Selector="Button.nav:pointerover:pressed">
+            <Setter Property="Background" Value="#40808080"/>
+        </Style>
+
+        <!-- The buttons of the bar of the title of the launcher. -->
+        <Style Selector="Button.titlebar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Foreground" Value="{DynamicResource HMCL.TitleBarForeground}"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="40,*">
+    <!-- The bar of the title of the launcher, like the tool bar of Java HMCL. -->
+    <Border Grid.Row="0" x:Name="TitleBar" Background="{DynamicResource HMCL.TitleBarBackground}">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="4,0,160,0">
+            <Button Grid.Column="0" x:Name="BackButton" Classes="titlebar"
+                    ToolTip.Tip="{DynamicResource hmcl.mainview.back}">
+                <Path Data="M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z"
+                      Fill="{DynamicResource HMCL.TitleBarForeground}" Width="20" Height="20"
+                      Stretch="Uniform"/>
+            </Button>
+            <TextBlock Grid.Column="1" x:Name="TitleText"
+                       Text="{DynamicResource App.Title}"
+                       Foreground="{DynamicResource HMCL.TitleBarForeground}"
+                       FontWeight="Bold" FontSize="13"
+                       VerticalAlignment="Center" Margin="8,0,0,0"
+                       TextTrimming="CharacterEllipsis"/>
+            <Button Grid.Column="2" x:Name="HelpButton" Classes="titlebar"
+                    ToolTip.Tip="{DynamicResource help}">
+                <TextBlock Text="?" Foreground="{DynamicResource HMCL.TitleBarForeground}"
+                           FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+            </Button>
         </Grid>
+    </Border>
+
+    <Panel Grid.Row="1">
+        <!-- Custom background image, enabled by the appearance settings. -->
+        <Image x:Name="BackgroundImage" Stretch="UniformToFill" IsVisible="False"/>
+
+        <Grid ColumnDefinitions="240,*">
+        <!-- Left sidebar (Java RootPage sidebar) -->
+        <Border Background="{DynamicResource HMCL.SidebarBackground}" BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <!-- Title acts as home: returns to the launch page. -->
+                <Button Grid.Row="0" x:Name="HomeButton"
+                        Content="HMCL.NET"
+                        FontSize="16" FontWeight="Bold"
+                        Background="Transparent" BorderThickness="0"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                        Padding="16,14"/>
+
+                <ScrollViewer Grid.Row="1">
+                    <controls:AdvancedListBox Margin="8,0,8,8">
+                        <controls:ClassTitle Title="{DynamicResource account}" Margin="8,10,8,4"/>
+                        <!-- Java HMCL AccountAdvancedListItem: avatar + name + type. -->
+                        <controls:AdvancedListItem x:Name="AccountsButton" Classes="nav" Padding="8"
+                                                   Title="{Binding SelectedAccount.Username}"
+                                                   Subtitle="{Binding SelectedAccount.AccountType}"
+                                                   IsVisible="{Binding SelectedAccount, Converter={StaticResource NullToBoolConverter}, Mode=OneWay}">
+                            <controls:AdvancedListItem.Icon>
+                                <controls:AccountAvatar Username="{Binding SelectedAccount.Username}"
+                                                        Width="30" Height="30"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+
+                        <!-- The empty state of the account, like the one of Java HMCL. -->
+                        <controls:AdvancedListItem x:Name="MissingAccountButton" Classes="nav" Padding="8"
+                                                   Title="{DynamicResource account.missing}"
+                                                   Subtitle="{DynamicResource account.missing.add}"
+                                                   IsVisible="{Binding SelectedAccount, Converter={StaticResource NotNullToBoolConverter}, Mode=OneWay}">
+                            <controls:AdvancedListItem.Icon>
+                                <controls:AccountAvatar Width="30" Height="30"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+
+                        <controls:ClassTitle Title="{DynamicResource instance}" Margin="8,10,8,4"/>
+                        <!-- Java HMCL GameAdvancedListItem: icon + instance + version. -->
+                        <controls:AdvancedListItem x:Name="InstanceItemButton" Classes="nav" Padding="8"
+                                                   Title="{DynamicResource instance.manage.manage}"
+                                                   Subtitle="{Binding SelectedInstance.Id}"
+                                                   IsVisible="{Binding SelectedInstance, Converter={StaticResource NullToBoolConverter}, Mode=OneWay}">
+                            <controls:AdvancedListItem.Icon>
+                                <Border Width="30" Height="30" CornerRadius="4" Background="#C9D8C5">
+                                    <Path Data="M12,2L2,7V17L12,22L22,17V7L12,2M12,4.15L19.85,8.15L12,12.15L4.15,8.15L12,4.15Z"
+                                          Fill="#4C7A4C" Width="16" Height="16" Stretch="Uniform"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+
+                        <!-- The empty state of the instance, like the one of Java HMCL. -->
+                        <controls:AdvancedListItem x:Name="MissingInstanceButton" Classes="nav" Padding="8"
+                                                   Title="{DynamicResource instance.empty}"
+                                                   Subtitle="{DynamicResource instance.empty.add}"
+                                                   IsVisible="{Binding SelectedInstance, Converter={StaticResource NotNullToBoolConverter}, Mode=OneWay}">
+                            <controls:AdvancedListItem.Icon>
+                                <Border Width="30" Height="30" CornerRadius="4" Background="#E4E4E4">
+                                    <Path Data="M12,2L2,7V17L12,22L22,17V7L12,2M12,4.15L19.85,8.15L12,12.15L4.15,8.15L12,4.15Z"
+                                          Fill="#9E9E9E" Width="16" Height="16" Stretch="Uniform"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+
+                        <controls:AdvancedListItem x:Name="InstancesButton" Classes="nav"
+                                                   Title="{DynamicResource instance.manage}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M7,5H21V7H7V5M7,13V11H21V13H7M4,4.5A1.5,1.5 0 0,1 5.5,6A1.5,1.5 0 0,1 4,7.5A1.5,1.5 0 0,1 2.5,6A1.5,1.5 0 0,1 4,4.5M4,10.5A1.5,1.5 0 0,1 5.5,12A1.5,1.5 0 0,1 4,13.5A1.5,1.5 0 0,1 2.5,12A1.5,1.5 0 0,1 4,10.5M7,19V17H21V19H7M4,16.5A1.5,1.5 0 0,1 5.5,18A1.5,1.5 0 0,1 4,19.5A1.5,1.5 0 0,1 2.5,18A1.5,1.5 0 0,1 4,16.5Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+                        <controls:AdvancedListItem x:Name="InstanceDetailsButton" Classes="nav"
+                                                   Title="{DynamicResource Sidebar.InstanceDetails}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M3,17V3H21V17H12V15H3V17M11,7H9L7,9H6L13,3L20,9H19L14,7H13V5H11V7Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+                        <controls:AdvancedListItem x:Name="DownloadButton" Classes="nav"
+                                                   Title="{DynamicResource download}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+
+                        <controls:AdvancedListItem x:Name="TasksButton" Classes="nav"
+                                                   Title="{DynamicResource Sidebar.Tasks}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M3,5H21V7H3V5M3,11H15V13H3V11M3,17H18V19H3V17Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.general}" Margin="8,10,8,4"/>
+                        <controls:AdvancedListItem x:Name="SettingsButton" Classes="nav"
+                                                   Title="{DynamicResource settings}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+                        <controls:AdvancedListItem x:Name="TerracottaButton" Classes="nav"
+                                                   Title="{DynamicResource terracotta}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+                        <controls:AdvancedListItem x:Name="FeedbackButton" Classes="nav"
+                                                   Title="{DynamicResource contact}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6M6,6H18V8H6M6,12H15V14H6"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+                        <controls:AdvancedListItem x:Name="AboutButton" Classes="nav"
+                                                   Title="{DynamicResource about}">
+                            <controls:AdvancedListItem.Icon>
+                                <Path Data="M11,2H13V4H11V2M11,6H13V14H11V6M12,16A1.5,1.5 0 0,0 13.5,17.5A1.5,1.5 0 0,0 12,19A1.5,1.5 0 0,0 10.5,17.5A1.5,1.5 0 0,0 12,16M12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22Z"
+                                      Fill="#555" Width="16" Height="16" Stretch="Uniform"/>
+                            </controls:AdvancedListItem.Icon>
+                        </controls:AdvancedListItem>
+                    </controls:AdvancedListBox>
+                </ScrollViewer>
+
+                <!-- Status text and memory at the bottom of the sidebar. -->
+                <Border Grid.Row="2" BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="0,1,0,0"
+                        Padding="12,8">
+                    <StackPanel Spacing="2">
+                        <!-- Progress of the running task, mirroring Java HMCL's task list. -->
+                        <StackPanel IsVisible="{Binding TaskList.IsBusy, Mode=OneWay}" Spacing="4" Margin="0,0,0,6">
+                            <TextBlock Text="{Binding TaskList.CurrentTaskName}" FontSize="11"
+                                       FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                            <ProgressBar Height="4" Minimum="0" Maximum="100"
+                                         Value="{Binding TaskList.CurrentTaskProgressValue, Mode=OneWay}"
+                                         IsIndeterminate="{Binding TaskList.CurrentTaskIsIndeterminate}"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding MemoryStatus}" FontSize="11"
+                                   Foreground="#666"/>
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="11"
+                                   Foreground="#666" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Right content area -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <!-- The hint pane shows the messages of the launcher. -->
+            <controls:HintPane Grid.Row="0" x:Name="HintPane" Hint="{Binding Hint}"/>
+            <!-- The pages fade in when they are shown, like the transitions of Java HMCL. -->
+            <TransitioningContentControl Grid.Row="1" Name="PageHost">
+                <TransitioningContentControl.PageTransition>
+                    <animation:CrossFade Duration="0:0:0.15" />
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
+        </Grid>
+        </Grid>
+    </Panel>
+
+    <!-- The toast shows the transient messages of the launcher. -->
+    <Border Name="ToastBorder" IsVisible="False"
+            Background="#323232" CornerRadius="4" Padding="16,10"
+            HorizontalAlignment="Right" VerticalAlignment="Bottom"
+            Margin="0,0,24,24" MaxWidth="420">
+        <TextBlock Name="ToastText" Foreground="White" TextWrapping="Wrap"/>
+    </Border>
     </Grid>
 </UserControl>

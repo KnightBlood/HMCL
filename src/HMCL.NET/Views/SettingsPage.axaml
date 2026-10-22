@@ -1,0 +1,650 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:java="clr-namespace:HMCLCore.NET.Java;assembly=HMCLCore.NET"
+             xmlns:game="clr-namespace:HMCLCore.NET.Setting;assembly=HMCLCore.NET"
+             xmlns:controls="clr-namespace:HMCL.NET.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:DataType="vm:SettingsViewModel"
+             x:Class="HMCL.NET.Views.SettingsPage">
+
+    <UserControl.Styles>
+        <!-- The items of the navigation of the settings page look like the
+             items of the navigation drawer of Java HMCL. -->
+        <Style Selector="TabItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="TabItem:selected">
+            <Setter Property="Background" Value="{DynamicResource HMCL.AccentBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource HMCL.AccentForeground}"/>
+        </Style>
+        <Style Selector="TabItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource HMCL.AccentForeground}"/>
+        </Style>
+
+        <!-- The cards holding the rows of the settings. -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource HMCL.CardBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource HMCL.BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,4"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="16">
+        <!-- The settings file written by a newer version of the launcher can be
+             backed up and overwritten. -->
+        <Border Grid.Row="0" IsVisible="{Binding SettingsFileReadOnly}"
+                Background="#FFF3E0" BorderBrush="#FFCC80" BorderThickness="1"
+                CornerRadius="6" Padding="12" Margin="0,0,0,12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="{DynamicResource settings.file.force_write.confirm}"
+                           TextWrapping="Wrap" FontSize="12"/>
+                <Button x:Name="ForceWriteButton" Content="{DynamicResource settings.file.force_write}"
+                        HorizontalAlignment="Left" Padding="12,6"/>
+            </StackPanel>
+        </Border>
+
+        <!-- The bar with the button that saves the settings. -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <TextBlock Grid.Column="0" Text="{DynamicResource settings}" FontSize="18" FontWeight="Bold"
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="1" x:Name="SaveButton" Content="{DynamicResource hmcl.settingspage.462_}"
+                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Background="{DynamicResource HMCL.AccentBackground}"
+                    Foreground="{DynamicResource HMCL.AccentForeground}"
+                    Padding="16,8"/>
+        </Grid>
+
+        <!-- The navigation of the settings page is on the left, like the one of
+             Java HMCL. -->
+        <TabControl Grid.Row="2" TabStripPlacement="Left" Margin="-16,0,-16,-16"
+                    Background="Transparent" BorderThickness="0">
+            <TabItem Header="{DynamicResource settings.type.global.manage}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <!-- The presets of the game settings; the instances inherit
+                             from the preset they name. -->
+                        <controls:ClassTitle Title="{DynamicResource settings.type.global.preset}"
+                                             Subtitle="{DynamicResource settings.type.global.preset.help}"
+                                             Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+                                    <ComboBox Grid.Column="0" x:Name="GameSettingsPresetBox"
+                                              ItemsSource="{Binding GameSettingsPresets}"
+                                              SelectedItem="{Binding SelectedGameSettingsPreset, Mode=TwoWay}"
+                                              HorizontalAlignment="Stretch" Margin="0,0,8,0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="game:GameSettingsPreset">
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <Button Grid.Column="1" x:Name="CreatePresetButton"
+                                            Content="{DynamicResource GameSettingsPreset.New}"
+                                            Padding="10,6" Margin="0,0,6,0"/>
+                                    <Button Grid.Column="2" x:Name="RenamePresetButton"
+                                            Content="{DynamicResource GameSettingsPreset.Rename}"
+                                            Padding="10,6" Margin="0,0,6,0"/>
+                                    <Button Grid.Column="3" x:Name="DefaultPresetButton"
+                                            Content="{DynamicResource GameSettingsPreset.SetDefault}"
+                                            Padding="10,6" Margin="0,0,6,0"/>
+                                    <Button Grid.Column="4" x:Name="DeletePresetButton"
+                                            Content="{DynamicResource GameSettingsPreset.Delete}"
+                                            Padding="10,6"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.game.section.basic}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineSelect Title="{DynamicResource settings.game.java_directory}"
+                                                     ItemsSource="{Binding JavaVersionTypes}"
+                                                     SelectedItem="{Binding GameJavaType, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.game.java_directory.version}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.340_}"
+                                                   Text="{Binding GameCustomJavaVersion, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.game.java_directory.choose}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.342_}"
+                                                   Text="{Binding GameCustomJavaPath, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.memory.auto_allocate}"
+                                                     IsChecked="{Binding GameAutoMemory, Mode=TwoWay}"/>
+                                <controls:Line Title="{DynamicResource settings.memory.manual_allocate}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBox Text="{Binding GameMinMemory, Mode=TwoWay}"
+                                                 PlaceholderText="{DynamicResource hmcl.settingspage.352_}" Width="120"
+                                                 IsEnabled="{Binding !GameAutoMemory}"/>
+                                        <TextBlock Text="MiB" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding GameMaxMemory, Mode=TwoWay}"
+                                                 PlaceholderText="{DynamicResource hmcl.settingspage.354_}" Width="120"
+                                                 IsEnabled="{Binding !GameAutoMemory}"/>
+                                    </StackPanel>
+                                </controls:Line>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.game.section.game}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineText Title="{DynamicResource settings.advanced.minecraft_arguments}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.356_}"
+                                                   Text="{Binding GameGameArguments, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.game.running_directory}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.382_}"
+                                                   Text="{Binding GameRunningDirectory, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.game.window_type}"
+                                                     IsChecked="{Binding GameFullscreen, Mode=TwoWay}"/>
+                                <controls:Line Title="{DynamicResource settings.game.window_type}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <NumericUpDown Value="{Binding GameWindowWidth, Mode=TwoWay}"
+                                                       Minimum="1" Maximum="9999" Increment="1" FormatString="0"
+                                                       Width="120"/>
+                                        <TextBlock Text="x" VerticalAlignment="Center"/>
+                                        <NumericUpDown Value="{Binding GameWindowHeight, Mode=TwoWay}"
+                                                       Minimum="1" Maximum="9999" Increment="1" FormatString="0"
+                                                       Width="120"/>
+                                    </StackPanel>
+                                </controls:Line>
+                                <controls:LineToggle Title="{DynamicResource settings.show_log}"
+                                                     IsChecked="{Binding GameShowLogs, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.advanced.launcher_visible}"
+                                                     ItemsSource="{Binding LauncherVisibilities}"
+                                                     SelectedItem="{Binding GameLauncherVisibility, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.advanced.launch_options}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineSelect Title="{DynamicResource settings.advanced.process_priority}"
+                                                     ItemsSource="{Binding ProcessPriorities}"
+                                                     SelectedItem="{Binding GameProcessPriority, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.advanced.graphics_backend}"
+                                                     ItemsSource="{Binding GraphicsBackends}"
+                                                     SelectedItem="{Binding GameGraphicsBackend, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.game.quick_play}"
+                                                     Subtitle="{DynamicResource settings.game.quick_play.subtitle}"
+                                                     ItemsSource="{Binding QuickPlayModes}"
+                                                     SelectedItem="{Binding GameQuickPlayMode, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.game.quick_play.singleplayer}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.392_}"
+                                                   Text="{Binding GameQuickPlayArgument, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.advanced.jvm}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineToggle Title="{DynamicResource settings.advanced.not_use_javaw}"
+                                                     IsChecked="{Binding GameNotUseJavaw, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.advanced.no_jvm_options}"
+                                                     Subtitle="{DynamicResource settings.advanced.no_jvm_options.desc}"
+                                                     IsChecked="{Binding GameNoJvmOptions, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.advanced.no_optimizing_jvm_options}"
+                                                     Subtitle="{DynamicResource settings.advanced.no_optimizing_jvm_options.desc}"
+                                                     IsChecked="{Binding GameNoOptimizingJvmOptions, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.advanced.not_check_jvm}"
+                                                     Subtitle="{DynamicResource settings.advanced.not_check_jvm.desc}"
+                                                     IsChecked="{Binding GameNotCheckJvm, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.advanced.dont_check_game_completeness}"
+                                                     IsChecked="{Binding GameNotCheckGame, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.advanced.jvm_args}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.346_}"
+                                                   Text="{Binding GameJvmOptions, Mode=TwoWay}"/>
+                                <controls:LineNumber Title="{DynamicResource settings.advanced.java_permanent_generation_space}"
+                                                     Value="{Binding GamePermSize, Mode=TwoWay}"
+                                                     Minimum="0" Maximum="1024" Increment="16"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.advanced.custom_commands}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineText Title="{DynamicResource settings.advanced.wrapper_launcher}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.370_}"
+                                                   Text="{Binding GameWrapper, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.advanced.precall_command}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.374_}"
+                                                   Text="{Binding GamePreCommand, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.advanced.post_exit_command}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.378_}"
+                                                   Text="{Binding GamePostCommand, Mode=TwoWay}"/>
+                                <controls:Line Title="{DynamicResource settings.advanced.environment_variables}"
+                                               Subtitle="{DynamicResource settings.advanced.environment_variables.subtitle}">
+                                    <TextBox Text="{Binding GameEnvironmentVariables, Mode=TwoWay}"
+                                             PlaceholderText="PLAYER_LANG=zh_CN&#10;EXAMPLE=1"
+                                             AcceptsReturn="True" TextWrapping="Wrap"
+                                             MinHeight="90" Width="320"/>
+                                </controls:Line>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.advanced.natives_settings}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineToggle Title="{DynamicResource settings.advanced.natives_directory.custom.enabled}"
+                                                     IsChecked="{Binding GameUseCustomNatives, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource settings.advanced.natives_directory}"
+                                                   PlaceholderText="C:\minecraft\natives"
+                                                   Text="{Binding GameNativesDirectory, Mode=TwoWay}"
+                                                   IsVisible="{Binding GameUseCustomNatives}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource java.management}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource settings.game.java_directory}"
+                                             Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:Line Title="{DynamicResource settings.game.java_directory.choose}"
+                                               Subtitle="{DynamicResource hmcl.settingspage.266_}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBox Text="{Binding JavaPath, Mode=TwoWay}"
+                                                 MinWidth="280" HorizontalAlignment="Left"/>
+                                        <Button x:Name="DetectJavaButton"
+                                                Content="{DynamicResource hmcl.settingspage.268_}" Padding="12,6"/>
+                                    </StackPanel>
+                                </controls:Line>
+                                <TextBlock Text="{Binding JavaPathMissing}" Foreground="#A83030" FontSize="12"
+                                           Margin="0,4,0,8"/>
+                                <TextBlock Text="{Binding JavaRuntimeInfo}" FontSize="12"
+                                           Foreground="{DynamicResource HMCL.MutedText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.game.java_directory}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <ListBox x:Name="JavaRuntimeList"
+                                         ItemsSource="{Binding JavaRuntimes}"
+                                         SelectedItem="{Binding SelectedJavaRuntime, Mode=TwoWay}"
+                                         MinHeight="140" HorizontalAlignment="Stretch">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="java:JavaRuntime">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Version}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Path}" FontSize="11" Foreground="#888"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <WrapPanel Orientation="Horizontal">
+                                    <Button x:Name="RefreshJavaButton" Content="{DynamicResource button.refresh}" Padding="12,6" Margin="0,0,8,8"/>
+                                    <Button x:Name="UseJavaButton" Content="{DynamicResource hmcl.settingspage.272_}" Padding="12,6" Margin="0,0,8,8"/>
+                                    <Button x:Name="AddJavaButton" Content="{DynamicResource hmcl.settingspage.274_}" Padding="12,6" Margin="0,0,8,8"/>
+                                    <Button x:Name="RemoveJavaButton" Content="{DynamicResource hmcl.settingspage.276_}" Padding="12,6" Margin="0,0,8,8"/>
+                                    <Button x:Name="RevealJavaButton" Content="{DynamicResource hmcl.settingspage.278_}" Padding="12,6" Margin="0,0,8,8"/>
+                                    <Button x:Name="UninstallJavaButton" Content="{DynamicResource hmcl.settingspage.280_}" Padding="12,6" Margin="0,0,8,8"/>
+                                    <Button x:Name="DownloadJavaButton" Content="{DynamicResource hmcl.settingspage.282_}"
+                                            Background="{DynamicResource HMCL.AccentBackground}"
+                                            Foreground="{DynamicResource HMCL.AccentForeground}"
+                                            Padding="12,6" Margin="0,0,8,8"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.misc}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <ListBox x:Name="DisabledJavaList"
+                                         ItemsSource="{Binding DisabledJavaRuntimes}"
+                                         SelectedItem="{Binding SelectedDisabledJavaRuntime, Mode=TwoWay}"
+                                         MinHeight="80" HorizontalAlignment="Stretch"
+                                         FontSize="11"/>
+                                <WrapPanel Orientation="Horizontal">
+                                    <Button x:Name="RestoreJavaButton" Content="{DynamicResource hmcl.settingspage.286_}" Padding="12,6" Margin="0,0,8,8"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="12"
+                                   Foreground="{DynamicResource HMCL.MutedText}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource settings.launcher.general}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.language}"
+                                             Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.language}"
+                                                     Subtitle="{DynamicResource settings.take_effect_after_restart}"
+                                                     ItemsSource="{Binding Languages}"
+                                                     SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource update}"
+                                                     Subtitle="{DynamicResource update.note.stable}"
+                                                     ItemsSource="{Binding UpdateChannels}"
+                                                     SelectedItem="{Binding UpdateChannel, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.misc}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineToggle Title="{DynamicResource settings.launcher.disable_april_fools}"
+                                                     Subtitle="{DynamicResource settings.take_effect_after_restart}"
+                                                     IsChecked="{Binding DisableAprilFools, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.enable_debug_log_output}"
+                                                     IsChecked="{Binding Debug, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource Analytics.Title}"
+                                                     Subtitle="{DynamicResource Analytics.Hint}"
+                                                     IsChecked="{Binding EnableAnalytics, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource Analytics.ServerUrl}"
+                                                   PlaceholderText="https://countly.example.com"
+                                                   Text="{Binding AnalyticsServerUrl, Mode=TwoWay}"
+                                                   IsVisible="{Binding EnableAnalytics}"/>
+                                <controls:LineText Title="{DynamicResource Analytics.AppKey}"
+                                                   PlaceholderText="app key"
+                                                   Text="{Binding AnalyticsAppKey, Mode=TwoWay}"
+                                                   IsVisible="{Binding EnableAnalytics}"/>
+                                <controls:LineNumber Title="{DynamicResource settings.memory}"
+                                                     Value="{Binding Memory, Mode=TwoWay}"
+                                                     Minimum="512" Maximum="65536" Increment="512"/>
+                                <controls:Line Title="{DynamicResource settings.launcher.window_size}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <NumericUpDown Value="{Binding WindowWidth, Mode=TwoWay}"
+                                                       Minimum="320" Maximum="16384"
+                                                       FormatString="0" Width="140"/>
+                                        <TextBlock Text="×" VerticalAlignment="Center"/>
+                                        <NumericUpDown Value="{Binding WindowHeight, Mode=TwoWay}"
+                                                       Minimum="240" Maximum="16384"
+                                                       FormatString="0" Width="140"/>
+                                    </StackPanel>
+                                </controls:Line>
+                                <controls:LineToggle Title="{DynamicResource settings.launcher.custom_jvm_args}"
+                                                     IsChecked="{Binding UseCustomJvmArgs, Mode=TwoWay}"/>
+                                <controls:Line Title="{DynamicResource settings.launcher.custom_jvm_args}">
+                                    <TextBox Text="{Binding CustomJvmArgs, Mode=TwoWay}"
+                                             AcceptsReturn="True" MinHeight="72" Width="280"
+                                             TextWrapping="Wrap"/>
+                                </controls:Line>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.debug}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:Line Title="{DynamicResource settings.launcher.log}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button x:Name="OpenLauncherLogButton" Content="{DynamicResource settings.launcher.log.open}" Padding="12,6"/>
+                                        <Button x:Name="ExportLauncherLogButton" Content="{DynamicResource settings.launcher.log.export}" Padding="12,6"/>
+                                    </StackPanel>
+                                </controls:Line>
+                                <controls:Line Title="{DynamicResource settings.launcher.log_font}"
+                                               Subtitle="{DynamicResource settings.launcher.log_font.desc}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBox Text="{Binding LogFontFamily, Mode=TwoWay}"
+                                                 PlaceholderText="Consolas" Width="160"/>
+                                        <NumericUpDown Value="{Binding LogFontSize, Mode=TwoWay}"
+                                                       Minimum="8" Maximum="32" Increment="1" Width="80"/>
+                                    </StackPanel>
+                                </controls:Line>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource settings.launcher.appearance}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.theme}"
+                                             Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.theme}"
+                                                     ItemsSource="{Binding Themes}"
+                                                     SelectedItem="{Binding SelectedTheme}"/>
+                                <controls:LineText Title="{DynamicResource settings.launcher.font_family}"
+                                                   Subtitle="{DynamicResource hmcl.settingspage.420_}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.422_}"
+                                                   Text="{Binding FontFamily, Mode=TwoWay}"/>
+                                <controls:LineNumber Title="{DynamicResource settings.launcher.font_size}"
+                                                     Value="{Binding FontSize, Mode=TwoWay}"
+                                                     Minimum="8" Maximum="32" Increment="1"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource launcher.background}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineFile x:Name="BackgroundImageLine" Title="{DynamicResource launcher.background}"
+                                                   Subtitle="{DynamicResource hmcl.settingspage.426_}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.428_}"
+                                                   ClearButtonText="{DynamicResource button.clear}"
+                                                   FilePath="{Binding BackgroundImagePath, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource launcher.background}"
+                                                     ItemsSource="{Binding BackgroundTypes}"
+                                                     SelectedItem="{Binding SelectedBackgroundType, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource launcher.background.builtin}"
+                                                     Subtitle="{DynamicResource launcher.background.builtin}"
+                                                     ItemsSource="{Binding BuiltinWallpapers}"
+                                                     SelectedItem="{Binding SelectedBuiltinWallpaper, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource launcher.background}"
+                                                   Subtitle="{DynamicResource launcher.background}"
+                                                   PlaceholderText="https://example.com/background.png"
+                                                   Text="{Binding NetworkBackgroundImageUrl, Mode=TwoWay}"/>
+                                <controls:LineNumber Title="{DynamicResource settings.launcher.background.settings.opacity}"
+                                                     Value="{Binding BackgroundOpacity, Mode=TwoWay}"
+                                                     Minimum="0" Maximum="1" Increment="0.05"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.theme_color}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineText Title="{DynamicResource settings.launcher.theme_color}"
+                                                   Subtitle="{DynamicResource settings.launcher.theme_color_style}"
+                                                   PlaceholderText="#2B579A"
+                                                   Text="{Binding ThemeColor, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.theme_color_style}"
+                                                     ItemsSource="{Binding ThemeColorStyles}"
+                                                     SelectedItem="{Binding SelectedThemeColorStyle, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.contrast}"
+                                                     ItemsSource="{Binding ThemeContrasts}"
+                                                     SelectedItem="{Binding SelectedThemeContrast, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.launcher.animation}"
+                                                     Subtitle="{DynamicResource settings.launcher.animation}"
+                                                     IsChecked="{Binding DisableAnimations, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.text_rendering}"
+                                                     ItemsSource="{Binding TextRenderingModes}"
+                                                     SelectedItem="{Binding SelectedTextRenderingMode, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.launcher.title_transparent}"
+                                                     Subtitle="{DynamicResource settings.launcher.title_transparent}"
+                                                     IsChecked="{Binding TitleBarTransparent, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.launcher.transparency_effects}"
+                                                     Subtitle="{DynamicResource hmcl.settingspage.432_}"
+                                                     IsChecked="{Binding EnableTransparencyEffects, Mode=TwoWay}"/>
+                                <controls:Line Title="{DynamicResource settings.launcher.theme_pack}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button x:Name="ExportThemeButton" Content="{DynamicResource hmcl.settingspage.438_}" Padding="12,6"/>
+                                        <Button x:Name="ImportThemeButton" Content="{DynamicResource hmcl.settingspage.440_}" Padding="12,6"/>
+                                        <Button x:Name="ManageThemeButton" Content="{DynamicResource theme_pack.manage}" Padding="12,6"/>
+                                    </StackPanel>
+                                </controls:Line>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource launcher.theme.list}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <ListBox Grid.Column="0" ItemsSource="{Binding BuiltinThemes}"
+                                         SelectedItem="{Binding SelectedThemeItem, Mode=TwoWay}"
+                                         MaxHeight="140">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:ThemeItem">
+                                            <StackPanel Spacing="2">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Description}" FontSize="11" Foreground="#888"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <Button Grid.Column="1" x:Name="ApplyThemeButton"
+                                        Content="{DynamicResource launcher.theme.apply}"
+                                        Padding="12,6" Margin="8,0,0,0" VerticalAlignment="Top"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource download}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource download}"
+                                             Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.download.version_list_source}"
+                                                     Subtitle="{DynamicResource hmcl.settingspage.318_}"
+                                                     ItemsSource="{Binding DownloadSources}"
+                                                     SelectedItem="{Binding VersionListSource, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource settings.launcher.download.file_download_source}"
+                                                     Subtitle="{DynamicResource hmcl.settingspage.322_}"
+                                                     ItemsSource="{Binding DownloadSources}"
+                                                     SelectedItem="{Binding FileDownloadSource, Mode=TwoWay}"/>
+                                <controls:LineToggle Title="{DynamicResource settings.launcher.download.auto_download_threads}"
+                                                     IsChecked="{Binding AutoDownloadThreads, Mode=TwoWay}"/>
+                                <controls:LineNumber Title="{DynamicResource settings.launcher.download.threads}"
+                                                     Subtitle="{DynamicResource hmcl.settingspage.330_}"
+                                                     Value="{Binding DownloadThreads, Mode=TwoWay}"
+                                                     Minimum="1" Maximum="64" Increment="1"
+                                                     IsEnabled="{Binding !AutoDownloadThreads}"/>
+                                <controls:LineText Title="CurseForge API Key"
+                                                   Subtitle="{DynamicResource hmcl.settingspage.324_}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.326_}"
+                                                   Text="{Binding CurseForgeApiKey, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <controls:ClassTitle Title="{DynamicResource settings.launcher.network}"
+                                             Margin="0,8,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <controls:LineToggle Title="{DynamicResource hmcl.settingspage.396_}"
+                                                     IsChecked="{Binding ProxyEnabled, Mode=TwoWay}"/>
+                                <controls:LineSelect Title="{DynamicResource hmcl.settingspage.398_}"
+                                                     ItemsSource="{Binding ProxyTypes}"
+                                                     SelectedItem="{Binding ProxyType, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource hmcl.settingspage.400_}"
+                                                   PlaceholderText="127.0.0.1"
+                                                   Text="{Binding ProxyHost, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource hmcl.settingspage.402_}"
+                                                   PlaceholderText="8080"
+                                                   Text="{Binding ProxyPort, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource hmcl.settingspage.404_}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.406_}"
+                                                   Text="{Binding ProxyUsername, Mode=TwoWay}"/>
+                                <controls:LineText Title="{DynamicResource hmcl.settingspage.408_}"
+                                                   PlaceholderText="{DynamicResource hmcl.settingspage.410_}"
+                                                   Text="{Binding ProxyPassword, Mode=TwoWay}"/>
+                                <controls:Line Title="{DynamicResource hmcl.settingspage.412_}"
+                                               Subtitle="{DynamicResource hmcl.settingspage.414_}">
+                                    <Button Content="{DynamicResource hmcl.settingspage.416_}"
+                                            Command="{Binding TestProxyCommand}"
+                                            IsEnabled="{Binding ProxyEnabled}"
+                                            Padding="12,6"/>
+                                </controls:Line>
+                                <TextBlock Text="{Binding ProxyTestStatus}"
+                                           Foreground="{DynamicResource HMCL.MutedText}" FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource help}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource help}" Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.442_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.444_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.446_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.448_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.450_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <Button x:Name="OpenDocumentationButton" Content="{DynamicResource hmcl.settingspage.452_}"
+                                        HorizontalAlignment="Left" Padding="12,6"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource contact}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource contact}" Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.454_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button x:Name="OpenFeedbackButton" Content="{DynamicResource hmcl.settingspage.456_}"
+                                            HorizontalAlignment="Left" Padding="12,6"/>
+                                    <Button x:Name="OpenProjectButton" Content="{DynamicResource hmcl.settingspage.458_}"
+                                            HorizontalAlignment="Left" Padding="12,6"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource about}">
+                <ScrollViewer>
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left" Spacing="8" Margin="16">
+                        <controls:ClassTitle Title="{DynamicResource about}" Margin="0,0,0,4"/>
+                        <Border Classes="card">
+                            <StackPanel>
+                                <TextBlock Text="Hello Minecraft! Launcher (.NET)" FontWeight="Bold"/>
+                                <TextBlock Text="{DynamicResource hmcl.settingspage.460_}"
+                                           FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="GNU General Public License v3.0"
+                                           FontSize="12" Foreground="{DynamicResource HMCL.MutedText}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+        xmlns:game="clr-namespace:HMCLCore.NET.Game;assembly=HMCLCore.NET"
+        xmlns:core="clr-namespace:HMCLCore.NET.Addon;assembly=HMCLCore.NET"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="560"
+        x:DataType="vm:ModsViewModel"
+        x:Class="HMCL.NET.Views.ModsDialog"
+        Title="{DynamicResource hmcl.modsdialog.228_}" Width="720" Height="560"
+        WindowStartupLocation="CenterOwner">
+
+    <StackPanel Margin="16">
+        <!-- Installed mods -->
+        <TextBlock Text="{DynamicResource hmcl.modsdialog.230_}" FontWeight="Bold" Margin="0,0,0,8"/>
+        <ListBox x:Name="InstalledList"
+                 ItemsSource="{Binding InstalledMods}"
+                 SelectedItem="{Binding SelectedInstalledMod, Mode=TwoWay}"
+                 Height="260" Margin="0,0,0,8">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="core:LocalMod">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="✓" Foreground="#2B7A2B" IsVisible="{Binding Enabled}"/>
+                        <TextBlock Text="✗" Foreground="#A83030" IsVisible="{Binding !Enabled}"/>
+                        <TextBlock Text="{Binding DisplayName}"/>
+                        <TextBlock Text="{Binding ModLoaderType}" Foreground="#888"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,16">
+            <Button x:Name="ToggleModButton" Content="{DynamicResource hmcl.modsdialog.232_}" Padding="14,6"/>
+            <Button x:Name="DeleteModButton" Content="{DynamicResource hmcl.modsdialog.234_}" Padding="14,6" Background="#A83030" Foreground="White"/>
+            <Button x:Name="RefreshModsButton" Content="{DynamicResource hmcl.modsdialog.236_}" Padding="14,6"/>
+            <Button x:Name="CheckUpdatesButton" Content="{DynamicResource addon.check_update.button}" Padding="14,6"
+                    Background="#2B7A2B" Foreground="White"/>
+        </StackPanel>
+
+        <!-- Available mod updates -->
+        <TextBlock Text="{DynamicResource hmcl.modsdialog.238_}" FontWeight="Bold" Margin="0,0,0,8"/>
+
+        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <CheckBox Grid.Column="0" Content="{DynamicResource addon.check_update.preview}"
+                      IsChecked="{Binding PreviewUpdates, Mode=TwoWay}"/>
+            <Button Grid.Column="1" x:Name="ExportUpdateListButton"
+                    Content="{DynamicResource button.export}" Padding="12,4"/>
+        </Grid>
+
+        <ListBox x:Name="UpdateList"
+                 ItemsSource="{Binding UpdateList}"
+                 SelectedItem="{Binding SelectedUpdate, Mode=TwoWay}"
+                 Height="120" Margin="0,0,0,8">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="core:AddonUpdate">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{Binding LocalMod.Name}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding CurrentVersion}" Foreground="#888"/>
+                        <TextBlock Text="→"/>
+                        <TextBlock Text="{Binding TargetVersion}" Foreground="#2B7A2B"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,16">
+            <Button x:Name="UpdateSelectedButton" Content="{DynamicResource hmcl.modsdialog.240_}" Padding="14,6"/>
+            <Button x:Name="UpdateAllButton" Content="{DynamicResource hmcl.modsdialog.242_}" Padding="14,6"
+                    Background="#2B579A" Foreground="White"/>
+            <Button x:Name="ShowChangelogButton" Content="{DynamicResource addon.changelog}" Padding="14,6"/>
+        </StackPanel>
+
+        <!-- Remote search & install -->
+        <TextBlock Text="{DynamicResource hmcl.modsdialog.244_}" FontWeight="Bold" Margin="0,0,0,8"/>
+        <ComboBox ItemsSource="{Binding RepositoryNames}"
+                  SelectedItem="{Binding SelectedRepository, Mode=TwoWay}"
+                  HorizontalAlignment="Left" MinWidth="160" Margin="0,0,0,8"/>
+        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <TextBox Text="{Binding SearchQuery, Mode=TwoWay}" PlaceholderText="{DynamicResource hmcl.modsdialog.246_}"/>
+            <Button x:Name="SearchModsButton" Grid.Column="1" Content="{DynamicResource search}" Margin="8,0,0,0" Padding="14,6"/>
+        </Grid>
+        <ListBox x:Name="RemoteList"
+                 ItemsSource="{Binding RemoteMods}"
+                 SelectedItem="{Binding SelectedRemoteMod, Mode=TwoWay}"
+                 Height="230">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="core:RemoteAddon">
+                    <StackPanel Orientation="Vertical" Spacing="2">
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Description}" Foreground="#777" TextWrapping="NoWrap"
+                                   MaxLines="1" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+            <Button x:Name="InstallModButton" Content="{DynamicResource hmcl.modsdialog.248_}" Padding="14,6"
+                    Background="#2B579A" Foreground="White"/>
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" IsEnabled="{Binding IsBusy}" Width="120" Height="4"
+                         VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Foreground="#555"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

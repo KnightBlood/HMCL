@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:game="clr-namespace:HMCLCore.NET.Game;assembly=HMCLCore.NET"
+             xmlns:core="clr-namespace:HMCLCore.NET.Setting;assembly=HMCLCore.NET"
+             xmlns:controls="clr-namespace:HMCL.NET.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:DataType="vm:MainWindowViewModel"
+             x:Class="HMCL.NET.Views.InstancesPage" Background="{DynamicResource HMCL.PageBackground}">
+
+    <UserControl.Styles>
+        <!-- The rows of buttons wrap, so that no button is cut off when the
+             window is narrow. -->
+        <Style Selector="WrapPanel > Button">
+            <Setter Property="Margin" Value="0,0,8,8"/>
+        </Style>
+        <Style Selector="WrapPanel > TextBox">
+            <Setter Property="Margin" Value="0,0,8,8"/>
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Mirrors Java HMCL GameListPage: directory panel left, toolbar + list center. -->
+    <Grid ColumnDefinitions="220,*" Margin="16">
+        <!-- Left: game directory panel -->
+        <Border BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1" CornerRadius="6"
+                Background="{DynamicResource HMCL.PanelBackground}" Padding="12" Margin="0,0,16,0"
+                VerticalAlignment="Stretch">
+            <Grid RowDefinitions="Auto,*,Auto,Auto">
+                <TextBlock Grid.Row="0" Text="{DynamicResource hmcl.instancespage.116_}" FontWeight="Bold" FontSize="14"
+                           Margin="0,0,0,8"/>
+                <ListBox Grid.Row="1" ItemsSource="{Binding GameDirectories}"
+                         SelectedItem="{Binding SelectedGameDirectory, Mode=TwoWay}"
+                         Background="Transparent" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="core:GameDirectory">
+                            <StackPanel Spacing="2" Margin="0,4">
+                                <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Path}" FontSize="10" Foreground="#888"
+                                           TextTrimming="CharacterEllipsis" MaxWidth="180"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="4" Margin="0,8,0,0">
+                    <Button x:Name="AddDirectoryButton" Content="{DynamicResource hmcl.instancespage.118_}" Padding="10,4"/>
+                    <Button x:Name="EditDirectoryButton" Content="{DynamicResource hmcl.instancespage.120_}" Padding="10,4"/>
+                    <Button x:Name="RemoveDirectoryButton" Content="{DynamicResource button.delete}" Padding="10,4"
+                            Background="#B0413E" Foreground="White"/>
+                </StackPanel>
+                <TextBlock Grid.Row="3" Text="{DynamicResource hmcl.instancespage.122_}"
+                           FontSize="11" Foreground="#888" TextWrapping="Wrap" Margin="0,8,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Center: toolbar, list and actions -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*,Auto">
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                <TextBlock Grid.Column="0" Text="{DynamicResource instance.manage.manage}" FontSize="18" FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <Button Grid.Column="1" x:Name="RefreshInstancesButton"
+                        Content="{DynamicResource button.refresh}"
+                        Command="{Binding ReloadInstancesCommand}"
+                        Padding="12,6"/>
+            </Grid>
+
+            <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
+                <TextBox Text="{Binding InstanceSearchText, Mode=TwoWay}"
+                         PlaceholderText="{DynamicResource hmcl.instancespage.124_}" Width="150"/>
+                <TextBox x:Name="InstanceIdBox" PlaceholderText="{DynamicResource hmcl.instancespage.126_}" Width="140"/>
+                <TextBox x:Name="VersionBox" PlaceholderText="{DynamicResource mods.game.version}" Width="120"/>
+                <Button x:Name="CreateInstanceButton" Content="{DynamicResource hmcl.instancespage.128_}"
+                        Background="{DynamicResource HMCL.AccentBackground}"
+                        Foreground="{DynamicResource HMCL.AccentForeground}" Padding="14,6"/>
+                <Button x:Name="QuickCreateInstanceButton" Content="{DynamicResource hmcl.instancespage.130_}"
+                        Padding="14,6"/>
+                <Button x:Name="InstallModpackButton" Content="{DynamicResource install.modpack}"
+                        Padding="14,6"/>
+                <Button x:Name="InstallLoaderButton" Content="{DynamicResource hmcl.instancespage.132_}"
+                        Padding="14,6"/>
+            </WrapPanel>
+
+            <ListBox Grid.Row="2" ItemsSource="{Binding FilteredInstances}"
+                     SelectedItem="{Binding SelectedInstance, Mode=TwoWay}"
+                     HorizontalAlignment="Stretch"
+                     Background="Transparent" BorderThickness="0">
+                <!-- Right-click actions mirroring Java HMCL's GameListPopupMenu. -->
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem x:Name="LaunchInstanceMenuItem" Header="{DynamicResource instance.launch}"
+                                  ToolTip.Tip="{DynamicResource hmcl.instancespage.134_}"/>
+                        <MenuItem x:Name="BackupInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.136_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.instancespage.138_}"/>
+                        <Separator/>
+                        <MenuItem x:Name="ManageInstanceMenuItem" Header="{DynamicResource modrinth.category.management}">
+                            <MenuItem x:Name="GameSettingsInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.140_}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.142_}"/>
+                            <MenuItem x:Name="ModsInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.144_}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.146_}"/>
+                            <MenuItem x:Name="WorldsInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.148_}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.150_}"/>
+                            <MenuItem x:Name="VerifyInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.152_}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.154_}"/>
+                        </MenuItem>
+                        <MenuItem x:Name="ModpackInstanceMenuItem" Header="{DynamicResource modpack}">
+                            <MenuItem x:Name="ExportInstanceMenuItem" Header="{DynamicResource modpack.export}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.156_}"/>
+                            <MenuItem x:Name="InstallModpackMenuItem" Header="{DynamicResource hmcl.instancespage.158_}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.160_}"/>
+                            <MenuItem x:Name="UpdateModpackMenuItem" Header="{DynamicResource hmcl.instancespage.162_}"
+                                      ToolTip.Tip="{DynamicResource hmcl.instancespage.164_}"/>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem x:Name="RenameInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.166_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.instancespage.168_}"/>
+                        <MenuItem x:Name="SetIconInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.170_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.instancespage.172_}"/>
+                        <MenuItem x:Name="RemoveIconInstanceMenuItem" Header="{DynamicResource hmcl.instancespage.174_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.instancespage.176_}"/>
+                        <Separator/>
+                        <MenuItem x:Name="DeleteInstanceMenuItem" Header="{DynamicResource button.delete}"
+                                  ToolTip.Tip="{DynamicResource hmcl.instancespage.178_}"/>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="game:GameInstance">
+                        <Border Margin="4" Padding="10" CornerRadius="6"
+                                Background="{DynamicResource HMCL.CardBackground}"
+                                BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8"
+                                            VerticalAlignment="Center">
+                                    <controls:InstanceIcon IconPath="{Binding IconPath}"
+                                                           Width="32" Height="32"
+                                                           VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Id}" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <Border Background="#E3EDF9" CornerRadius="3" Padding="4,1"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Loader}" FontSize="10"
+                                                   Foreground="#2B579A"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding Version}" Foreground="#888"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding LastPlayedText}" FontSize="11"
+                                               Foreground="#999" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="{DynamicResource hmcl.instancespage.180_}"
+                                        Click="OnRowLaunchClick"
+                                        Padding="10,4" FontSize="12"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <WrapPanel Grid.Row="3" Orientation="Horizontal" Margin="0,12,0,0">
+                <Button x:Name="ManageModsButton" Content="{DynamicResource hmcl.instancespage.182_}" Padding="14,6"/>
+                <Button x:Name="BackupInstanceButton" Content="{DynamicResource hmcl.instancespage.184_}" Padding="14,6"/>
+                <Button x:Name="ExportInstanceButton" Content="{DynamicResource button.export}" Padding="14,6"/>
+                <Button x:Name="VerifyInstanceButton" Content="{DynamicResource hmcl.instancespage.186_}" Padding="14,6"/>
+                <Button x:Name="GameSettingsInstanceButton" Content="{DynamicResource hmcl.instancespage.188_}" Padding="14,6"/>
+                <Button x:Name="WorldsInstanceButton" Content="{DynamicResource hmcl.instancespage.190_}" Padding="14,6"/>
+                <Button x:Name="RenameInstanceButton" Content="{DynamicResource hmcl.instancespage.192_}" Padding="14,6"/>
+                <Button x:Name="SetIconInstanceButton" Content="{DynamicResource hmcl.instancespage.194_}" Padding="14,6"/>
+                <Button x:Name="RestoreInstanceButton" Content="{DynamicResource hmcl.instancespage.196_}" Padding="14,6"/>
+                <Button x:Name="DeleteInstanceButton" Content="{DynamicResource button.delete}"
+                        Background="#B0413E" Foreground="White" Padding="14,6"/>
+            </WrapPanel>
+        </Grid>
+    </Grid>
+</UserControl>

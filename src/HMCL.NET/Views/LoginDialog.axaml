@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="380" d:DesignHeight="380"
+        x:DataType="vm:LoginViewModel"
+        x:Class="HMCL.NET.Views.LoginDialog"
+        Title="{DynamicResource hmcl.logindialog.204_}" Width="380" Height="380"
+        CanResize="False" WindowStartupLocation="CenterOwner">
+
+    <StackPanel Margin="16" Spacing="10">
+        <TextBlock Text="{DynamicResource account.create}" FontSize="18" FontWeight="Bold"/>
+
+        <TextBlock Text="{DynamicResource hmcl.logindialog.206_}"/>
+        <ComboBox x:Name="LoginTypeBox" HorizontalAlignment="Stretch" SelectedIndex="0">
+            <ComboBoxItem Content="{DynamicResource hmcl.logindialog.208_}"/>
+            <ComboBoxItem Content="{DynamicResource hmcl.logindialog.210_}"/>
+            <ComboBoxItem Content="{DynamicResource hmcl.logindialog.212_}"/>
+        </ComboBox>
+
+        <TextBlock Text="{DynamicResource account.username}"/>
+        <TextBox Text="{Binding Username, Mode=TwoWay}" PlaceholderText="{DynamicResource account.username}"/>
+
+        <TextBlock Text="{DynamicResource account.password}" x:Name="PasswordLabel"/>
+        <TextBox Text="{Binding Password, Mode=TwoWay}" PasswordChar="*" PlaceholderText="{DynamicResource account.password}" x:Name="PasswordBox"/>
+
+        <TextBlock Text="{DynamicResource account.injector.server}" x:Name="ServerUrlLabel"/>
+        <TextBox x:Name="ServerUrlBox" Text="{Binding ServerUrl, Mode=TwoWay}" PlaceholderText="https://authserver.example.com"/>
+
+        <TextBlock Text="{DynamicResource hmcl.logindialog.214_}" x:Name="AuthCodeLabel"/>
+        <TextBox x:Name="AuthCodeBox" Text="{Binding AuthorizationCode, Mode=TwoWay}" PlaceholderText="{DynamicResource hmcl.logindialog.216_}"/>
+
+        <Button x:Name="BrowseButton" Content="{DynamicResource hmcl.logindialog.218_}" HorizontalAlignment="Left" Padding="10,6"/>
+
+        <!-- The character selection shown when the account owns several of them. -->
+        <StackPanel x:Name="CharacterPanel" IsVisible="False" Spacing="6">
+            <TextBlock Text="{DynamicResource hmcl.logindialog.220_}"/>
+            <ComboBox x:Name="CharacterBox" HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding AvailableProfiles}"
+                      SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button x:Name="SelectCharacterButton" Content="{DynamicResource hmcl.logindialog.222_}"
+                    HorizontalAlignment="Right" Padding="16,6"/>
+        </StackPanel>
+
+        <Button x:Name="LoginButton"
+                Content="{DynamicResource account.login}"
+                HorizontalAlignment="Right"
+                Background="#2B579A" Foreground="White"
+                Padding="20,8"/>
+
+        <ProgressBar IsIndeterminate="{Binding IsLoggingIn}" IsEnabled="{Binding IsLoggingIn}" Height="4"/>
+
+        <TextBlock Text="{Binding StatusMessage}" Foreground="#555" TextWrapping="Wrap"/>
+    </StackPanel>
+</Window>

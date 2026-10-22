@@ -7,6 +7,17 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+
+    <!-- The launcher is published as a native executable, so that it starts
+         without a runtime installed on the machine. -->
+    <PublishAot>true</PublishAot>
+    <PublishTrimmed>true</PublishTrimmed>
+    <!-- The partial trim mode keeps the members that are used by the
+         reflection of Avalonia and of the libraries of the launcher. -->
+    <TrimMode>partial</TrimMode>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>
+    <StackTraceSupport>false</StackTraceSupport>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +29,21 @@
 
   <ItemGroup>
     <None Include="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The localized texts of the launcher, taken from Java HMCL. -->
+    <EmbeddedResource Include="Strings\lang\*.properties" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The icon of the launcher, shown in the notification area. -->
+    <AvaloniaResource Include="Assets\hmcl.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The built-in wallpapers of the launcher, taken from Java HMCL. -->
+    <AvaloniaResource Include="Assets\wallpapers\*.jpg" />
   </ItemGroup>
 
   <ItemGroup>

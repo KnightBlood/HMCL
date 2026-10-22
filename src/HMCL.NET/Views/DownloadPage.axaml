@@ -1,0 +1,244 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:dl="clr-namespace:HMCLCore.NET.Download;assembly=HMCLCore.NET"
+             xmlns:addon="clr-namespace:HMCLCore.NET.Addon;assembly=HMCLCore.NET"
+             xmlns:controls="clr-namespace:HMCL.NET.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:DataType="vm:DownloadViewModel"
+             x:Class="HMCL.NET.Views.DownloadPage" Background="{DynamicResource HMCL.PageBackground}">
+
+    <UserControl.Styles>
+        <Style Selector="Button.nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <!-- The items of the navigation show their background when the mouse
+             is over them. -->
+        <Style Selector="Button.nav:pointerover">
+            <Setter Property="Background" Value="#22808080"/>
+        </Style>
+        <Style Selector="Button.nav:pointerover:pressed">
+            <Setter Property="Background" Value="#40808080"/>
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Mirrors Java HMCL download pages: category list left, content right. -->
+    <Grid ColumnDefinitions="200,*" Margin="16">
+        <!-- Left: download categories -->
+        <Border BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1" CornerRadius="6"
+                Background="{DynamicResource HMCL.PanelBackground}" Padding="8" Margin="0,0,16,0"
+                VerticalAlignment="Stretch">
+            <StackPanel Spacing="2">
+                <controls:ClassTitle Title="{DynamicResource download}" Margin="4,4,4,8"/>
+                <Button x:Name="GameCategoryButton" Content="{DynamicResource game}"
+                        Classes="nav"/>
+                <Button x:Name="ModpackCategoryButton" Content="{DynamicResource modpack}"
+                        Classes="nav"/>
+                <controls:ClassTitle Title="{DynamicResource download.content}" Margin="4,10,4,4"/>
+                <Button x:Name="ModCategoryButton" Content="{DynamicResource curse.category.4464}"
+                        Classes="nav"/>
+                <Button x:Name="ResourcePackCategoryButton" Content="{DynamicResource resourcepack}"
+                        Classes="nav"/>
+                <Button x:Name="WorldCategoryButton" Content="{DynamicResource world}"
+                        Classes="nav"/>
+                <Button x:Name="DataPackCategoryButton" Content="{DynamicResource curse.category.5193}"
+                        Classes="nav"/>
+                <Button x:Name="ShaderCategoryButton" Content="{DynamicResource download.shader}"
+                        Classes="nav"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Right: selected category content -->
+        <Grid Grid.Column="1">
+            <Grid x:Name="GamePanel" RowDefinitions="Auto,*,Auto">
+                <!-- The card holding the filters of the versions, like the one of
+                     the version page of Java HMCL. -->
+                <Border Grid.Row="0" BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1"
+                        CornerRadius="6" Background="{DynamicResource HMCL.CardBackground}" Padding="12" Margin="0,0,0,12">
+                    <Grid ColumnDefinitions="Auto,*,Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource instance.search}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SearchText, Mode=TwoWay}"
+                                 PlaceholderText="{DynamicResource instance.search.prompt}" Margin="0,0,16,0"/>
+
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource instance.game.type}"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding TypeFilters}"
+                                  SelectedItem="{Binding TypeFilter, Mode=TwoWay}"
+                                  MinWidth="140" Margin="0,0,16,0"/>
+
+                        <Button Grid.Row="0" Grid.Column="4" Content="{DynamicResource button.refresh}"
+                                Command="{Binding RefreshCommand}"
+                                Padding="12,6"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"
+                                   Text="{Binding StatusMessage}" Foreground="{DynamicResource HMCL.MutedText}"
+                                   FontSize="12" Margin="0,8,0,0"/>
+                        <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5"
+                                     IsIndeterminate="{Binding IsBusy}" Height="4" Margin="0,8,0,0"
+                                     IsVisible="{Binding IsBusy}"/>
+                    </Grid>
+                </Border>
+
+                <!-- The list of the versions of the game. -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding FilteredVersions}"
+                         SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
+                         HorizontalAlignment="Stretch"
+                         Background="Transparent" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="dl:VersionMetadata">
+                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,6">
+                                <!-- The icon of the kind of the version. -->
+                                <Border Grid.Column="0" Width="32" Height="32" CornerRadius="4"
+                                        Background="#C9D8C5" VerticalAlignment="Center">
+                                    <Path Data="M12,2L2,7V17L12,22L22,17V7L12,2M12,4.15L19.85,8.15L12,12.15L4.15,8.15L12,4.15Z"
+                                          Fill="#4C7A4C" Width="16" Height="16" Stretch="Uniform"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock Text="{Binding Id}" FontWeight="Bold"/>
+                                        <!-- The kind of the version, shown as a tag. -->
+                                        <Border Background="#2B579A" CornerRadius="3" Padding="6,1">
+                                            <TextBlock Text="{Binding Type, Converter={StaticResource VersionTypeConverter}}"
+                                                       Foreground="White" FontSize="10"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding ReleaseTimeText}" FontSize="11"
+                                               Foreground="{DynamicResource HMCL.MutedText}"/>
+                                </StackPanel>
+
+                                <!-- The button that installs the version. -->
+                                <Button Grid.Column="2" Command="{Binding $parent[ListBox].DataContext.DownloadVersionCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent" BorderThickness="0"
+                                        Width="34" Height="34" VerticalAlignment="Center"
+                                        ToolTip.Tip="{DynamicResource hmcl.downloadpage.054_}">
+                                    <Path Data="M4,11H16V13H4V11M16,6L12,10L8,6H16Z"
+                                          Fill="{DynamicResource HMCL.AccentBackground}" Width="18" Height="18"
+                                          Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- The loading pane is shown while the versions are fetched. -->
+                <controls:LoadingPane Grid.Row="1" x:Name="VersionLoadingPane"
+                                      State="{Binding LoadState}"
+                                      Message="{Binding LoadError}"/>
+
+                <!-- The installers of the mod loaders available for the selected version. -->
+                <Border Grid.Row="2" BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1"
+                        CornerRadius="6" Background="{DynamicResource HMCL.CardBackground}" Padding="12" Margin="0,12,0,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{DynamicResource settings.tabs.installers}" FontWeight="Bold"/>
+                        <Grid ColumnDefinitions="*,*,Auto,Auto">
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding Installers}"
+                                      SelectedItem="{Binding SelectedInstaller, Mode=TwoWay}"
+                                      PlaceholderText="{DynamicResource install.loader}"
+                                      MinWidth="160" Margin="0,0,8,0"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding SelectedInstaller.Versions}"
+                                      SelectedItem="{Binding SelectedInstallerVersion, Mode=TwoWay}"
+                                      MinWidth="160" Margin="0,0,8,0"/>
+                            <Button Grid.Column="2" Content="{DynamicResource install}"
+                                    Command="{Binding InstallLoaderCommand}"
+                                    IsEnabled="{Binding CanInstallLoader}"
+                                    Padding="12,6" Margin="0,0,8,0"/>
+                            <Button Grid.Column="3" Content="{DynamicResource button.refresh}"
+                                    Command="{Binding LoadInstallersCommand}"
+                                    Padding="12,6"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="ModpackPanel" IsVisible="False" RowDefinitions="Auto,Auto,*,Auto">
+                <TextBlock Grid.Row="0" Text="{DynamicResource hmcl.downloadpage.056_}" FontSize="18" FontWeight="Bold"
+                           Margin="0,0,0,12"/>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+                    <Button x:Name="InstallLocalModpackButton"
+                            Content="{DynamicResource hmcl.downloadpage.058_}"
+                            Background="#2B579A" Foreground="White" Padding="16,8"/>
+                </StackPanel>
+
+                <!-- The modpacks of the remote repositories. -->
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,12">
+                    <TextBox Grid.Column="0" Text="{Binding ModpackSearchQuery, Mode=TwoWay}"
+                             PlaceholderText="{DynamicResource search}" Margin="0,0,8,0"/>
+                    <Button Grid.Column="1" Content="{DynamicResource search}"
+                            Command="{Binding SearchModpacksCommand}"
+                            Padding="14,6" Margin="0,0,8,0"/>
+                    <Button Grid.Column="2" Content="{DynamicResource modpack.description}"
+                            Command="{Binding ShowModpackDescriptionCommand}"
+                            Padding="14,6" Margin="0,0,8,0"/>
+                    <Button Grid.Column="3" Content="{DynamicResource hmcl.downloadpage.058_}"
+                            Command="{Binding InstallSelectedModpackCommand}"
+                            Background="#2B579A" Foreground="White" Padding="14,6"/>
+                </Grid>
+
+                <ListBox Grid.Row="3" ItemsSource="{Binding RemoteModpackResults}"
+                         SelectedItem="{Binding SelectedRemoteModpack, Mode=TwoWay}"
+                         HorizontalAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="addon:RemoteAddon">
+                            <StackPanel Spacing="2" Margin="4">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Description}" FontSize="11"
+                                           Foreground="#888" TextWrapping="NoWrap"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <Grid x:Name="ModPanel" IsVisible="False" RowDefinitions="Auto,Auto,*,Auto">
+                <TextBlock Grid.Row="0" Text="{Binding AddonCategoryTitle}" FontSize="18" FontWeight="Bold"
+                           Margin="0,0,0,12"/>
+                <Grid Grid.Row="1" ColumnDefinitions="*,140,Auto,Auto" Margin="0,0,0,12">
+                    <TextBox Grid.Column="0" Text="{Binding ModSearchQuery, Mode=TwoWay}"
+                             PlaceholderText="{DynamicResource hmcl.downloadpage.062_}" Margin="0,0,8,0"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding ModRepositories}"
+                              SelectedItem="{Binding SelectedModRepository, Mode=TwoWay}"
+                              Margin="0,0,8,0"/>
+                    <Button Grid.Column="2" Content="{DynamicResource search}"
+                            Command="{Binding SearchModsCommand}"
+                            Padding="14,6" Margin="0,0,8,0"/>
+                    <Button Grid.Column="3" Content="{DynamicResource hmcl.downloadpage.064_}"
+                            Command="{Binding InstallSelectedModCommand}"
+                            Background="#2B579A" Foreground="White" Padding="14,6"/>
+                </Grid>
+                <ListBox Grid.Row="2" ItemsSource="{Binding RemoteModResults}"
+                         SelectedItem="{Binding SelectedRemoteMod, Mode=TwoWay}"
+                         HorizontalAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="addon:RemoteAddon">
+                            <StackPanel Spacing="2" Margin="4">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Description}" FontSize="11"
+                                           Foreground="#888" TextWrapping="NoWrap"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Grid.Row="3" Text="{Binding ModInstallStatus}"
+                           FontSize="12" Foreground="#555" Margin="0,8,0,0"/>
+            </Grid>
+
+            <TextBlock x:Name="PlaceholderText" IsVisible="False"
+                       Text="{DynamicResource hmcl.downloadpage.066_}"
+                       FontSize="14" Foreground="#888"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</UserControl>

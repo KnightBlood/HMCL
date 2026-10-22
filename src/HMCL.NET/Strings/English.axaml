@@ -1,0 +1,63 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" x:Class="HMCL.NET.Strings.English"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Application -->
+    <x:String x:Key="App.Title">Hello Minecraft! Launcher v3.16.4</x:String>
+    <x:String x:Key="App.Ready">Ready</x:String>
+
+    <!-- Sidebar -->
+    <x:String x:Key="Sidebar.Home">Home</x:String>
+    <x:String x:Key="Sidebar.Accounts">Accounts</x:String>
+    <x:String x:Key="Sidebar.Instances">Instances</x:String>
+    <x:String x:Key="Sidebar.InstanceDetails">Instance Details</x:String>
+    <x:String x:Key="Sidebar.Download">Download</x:String>
+    <x:String x:Key="Sidebar.Tasks">Tasks</x:String>
+    <x:String x:Key="Sidebar.Settings">Settings</x:String>
+
+    <!-- Common -->
+    <x:String x:Key="Common.Save">Save</x:String>
+    <x:String x:Key="Common.Cancel">Cancel</x:String>
+    <x:String x:Key="Common.Delete">Delete</x:String>
+    <x:String x:Key="Common.Rename">Rename</x:String>
+    <x:String x:Key="Common.Launch">Launch</x:String>
+    <x:String x:Key="Common.Open">Open</x:String>
+    <x:String x:Key="Common.Close">Close</x:String>
+
+    <!-- Launch Page -->
+    <x:String x:Key="Launch.Title">Launch</x:String>
+    <x:String x:Key="Launch.Button">Launch Game</x:String>
+    <x:String x:Key="Launch.Stop">Stop Game</x:String>
+
+    <!-- GameInstancePage -->
+    <x:String x:Key="Instance.Settings">Game Settings...</x:String>
+    <x:String x:Key="Instance.ExportModpack">Export Modpack...</x:String>
+    <x:String x:Key="Instance.Mods">Mods...</x:String>
+    <x:String x:Key="Instance.Worlds">Worlds...</x:String>
+    <x:String x:Key="Instance.Tabs.Settings">Settings</x:String>
+    <x:String x:Key="Instance.Tabs.Installers">Installers</x:String>
+    <x:String x:Key="Instance.Tabs.Mods">Mods</x:String>
+    <x:String x:Key="Instance.Tabs.ResourcePacks">Resource Packs</x:String>
+    <x:String x:Key="Instance.Tabs.DataPacks">Data Packs</x:String>
+    <x:String x:Key="Instance.Tabs.Shaders">Shaders</x:String>
+    <x:String x:Key="Instance.Tabs.Screenshots">Screenshots</x:String>
+    <x:String x:Key="Instance.Tabs.Folders">Folders</x:String>
+    <x:String x:Key="Instance.Folders.Title">Folders</x:String>
+    <x:String x:Key="Instance.Folders.OpenFolder">Open</x:String>
+    <x:String x:Key="Instance.Folders.GameDir">Game Directory</x:String>
+
+    <!-- Settings -->
+    <x:String x:Key="Settings.Java">Java</x:String>
+    <x:String x:Key="Settings.General">General</x:String>
+    <x:String x:Key="Settings.Download">Download</x:String>
+    <x:String x:Key="Settings.Network">Network</x:String>
+    <x:String x:Key="Settings.Appearance">Appearance</x:String>
+    <x:String x:Key="Settings.Help">Help</x:String>
+    <x:String x:Key="Settings.Feedback">Feedback</x:String>
+    <x:String x:Key="Settings.About">About</x:String>
+    <x:String x:Key="Settings.GameSettings">Game Settings</x:String>
+
+    <!-- Status -->
+    <x:String x:Key="Status.SelectInstance">Please select an instance first</x:String>
+    <x:String x:Key="Status.Exported">Exported</x:String>
+
+</ResourceDictionary>

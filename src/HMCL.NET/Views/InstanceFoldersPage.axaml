@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:HMCL.NET.Views"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="500"
+             x:Class="HMCL.NET.Views.InstanceFoldersPage">
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+            <TextBlock Text="{DynamicResource hmcl.instancefolderspage.112_}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ListBox x:Name="FolderList" DockPanel.Dock="Top" Height="400" Margin="16,12,16,16">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="views:FolderEntry">
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4">
+                        <Button Content="{DynamicResource hmcl.instancefolderspage.114_}" Width="60" VerticalAlignment="Center"
+                                CommandParameter="{Binding Path}"
+                                Click="OnOpenFolderClick"/>
+                        <TextBlock Text="{Binding Name}" Classes="item-title" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Path}" Classes="item-subtitle" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+
+</UserControl>

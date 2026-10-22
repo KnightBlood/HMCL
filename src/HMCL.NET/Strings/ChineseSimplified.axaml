@@ -1,0 +1,63 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" x:Class="HMCL.NET.Strings.ChineseSimplified"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Application -->
+    <x:String x:Key="App.Title">Hello Minecraft! Launcher v3.16.4</x:String>
+    <x:String x:Key="App.Ready">就绪</x:String>
+
+    <!-- Sidebar -->
+    <x:String x:Key="Sidebar.Home">首页</x:String>
+    <x:String x:Key="Sidebar.Accounts">账户管理</x:String>
+    <x:String x:Key="Sidebar.Instances">实例管理</x:String>
+    <x:String x:Key="Sidebar.InstanceDetails">实例详情</x:String>
+    <x:String x:Key="Sidebar.Download">下载</x:String>
+    <x:String x:Key="Sidebar.Tasks">任务</x:String>
+    <x:String x:Key="Sidebar.Settings">设置</x:String>
+
+    <!-- Common -->
+    <x:String x:Key="Common.Save">保存</x:String>
+    <x:String x:Key="Common.Cancel">取消</x:String>
+    <x:String x:Key="Common.Delete">删除</x:String>
+    <x:String x:Key="Common.Rename">重命名</x:String>
+    <x:String x:Key="Common.Launch">启动</x:String>
+    <x:String x:Key="Common.Open">打开</x:String>
+    <x:String x:Key="Common.Close">关闭</x:String>
+
+    <!-- Launch Page -->
+    <x:String x:Key="Launch.Title">启动</x:String>
+    <x:String x:Key="Launch.Button">启动游戏</x:String>
+    <x:String x:Key="Launch.Stop">停止游戏</x:String>
+
+    <!-- GameInstancePage -->
+    <x:String x:Key="Instance.Settings">游戏设置...</x:String>
+    <x:String x:Key="Instance.ExportModpack">导出模组包...</x:String>
+    <x:String x:Key="Instance.Mods">模组管理...</x:String>
+    <x:String x:Key="Instance.Worlds">世界管理...</x:String>
+    <x:String x:Key="Instance.Tabs.Settings">设置</x:String>
+    <x:String x:Key="Instance.Tabs.Installers">安装器</x:String>
+    <x:String x:Key="Instance.Tabs.Mods">模组</x:String>
+    <x:String x:Key="Instance.Tabs.ResourcePacks">资源包</x:String>
+    <x:String x:Key="Instance.Tabs.DataPacks">数据包</x:String>
+    <x:String x:Key="Instance.Tabs.Shaders">着色器</x:String>
+    <x:String x:Key="Instance.Tabs.Screenshots">截图</x:String>
+    <x:String x:Key="Instance.Tabs.Folders">文件夹</x:String>
+    <x:String x:Key="Instance.Folders.Title">文件夹</x:String>
+    <x:String x:Key="Instance.Folders.OpenFolder">打开</x:String>
+    <x:String x:Key="Instance.Folders.GameDir">游戏目录</x:String>
+
+    <!-- Settings -->
+    <x:String x:Key="Settings.Java">Java 管理</x:String>
+    <x:String x:Key="Settings.General">通用</x:String>
+    <x:String x:Key="Settings.Download">下载</x:String>
+    <x:String x:Key="Settings.Network">网络</x:String>
+    <x:String x:Key="Settings.Appearance">外观</x:String>
+    <x:String x:Key="Settings.Help">帮助</x:String>
+    <x:String x:Key="Settings.Feedback">反馈</x:String>
+    <x:String x:Key="Settings.About">关于</x:String>
+    <x:String x:Key="Settings.GameSettings">游戏设置</x:String>
+
+    <!-- Status -->
+    <x:String x:Key="Status.SelectInstance">请先选择一个实例</x:String>
+    <x:String x:Key="Status.Exported">已导出</x:String>
+
+</ResourceDictionary>

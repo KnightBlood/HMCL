@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:auth="clr-namespace:HMCLCore.NET.Auth;assembly=HMCLCore.NET"
+             xmlns:controls="clr-namespace:HMCL.NET.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:DataType="vm:MainWindowViewModel"
+             x:Class="HMCL.NET.Views.AccountsPage" Background="{DynamicResource HMCL.PageBackground}">
+
+    <!-- Mirrors Java HMCL AccountListPage: add-method panel left, account list center. -->
+    <Grid ColumnDefinitions="240,*" Margin="16">
+        <!-- Left: account creation methods -->
+        <Border BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1" CornerRadius="6"
+                Background="{DynamicResource HMCL.PanelBackground}" Padding="12" Margin="0,0,16,0"
+                VerticalAlignment="Top">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{DynamicResource account.create}" FontWeight="Bold" FontSize="14"/>
+
+                <Button x:Name="AddAccountButton"
+                        Content="{DynamicResource hmcl.accountspage.000_}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,8"/>
+
+                <TextBlock Text="{DynamicResource hmcl.accountspage.002_}" FontSize="12" Foreground="#666" Margin="0,8,0,0"/>
+                <TextBox x:Name="UsernameBox"
+                         PlaceholderText="{DynamicResource hmcl.accountspage.004_}"
+                         HorizontalAlignment="Stretch"/>
+                <Button x:Name="CreateOfflineAccountButton"
+                        Content="{DynamicResource hmcl.accountspage.006_}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,8"/>
+
+                <TextBlock Text="{DynamicResource hmcl.accountspage.008_}" FontSize="12"
+                           Foreground="#666" Margin="0,12,0,0"/>
+                <TextBox x:Name="AuthServerBox"
+                         PlaceholderText="https://example.com/api/yggdrasil"
+                         HorizontalAlignment="Stretch"/>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="AddAuthServerButton"
+                            Content="{DynamicResource hmcl.accountspage.010_}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Padding="12,8"/>
+                    <Button x:Name="RemoveAuthServerButton"
+                            Content="{DynamicResource hmcl.accountspage.012_}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Padding="12,8"/>
+                </StackPanel>
+                <ComboBox x:Name="AuthServerList"
+                          ItemsSource="{Binding AuthServers}"
+                          SelectedItem="{Binding SelectedAuthServer, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch"
+                          PlaceholderText="{DynamicResource hmcl.accountspage.014_}"/>
+                <Button x:Name="LoginAuthServerButton"
+                        Content="{DynamicResource hmcl.accountspage.016_}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="12,8"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Center: account list -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
+            <TextBlock Grid.Row="0" Text="{DynamicResource hmcl.accountspage.018_}" FontSize="18" FontWeight="Bold"
+                       Margin="0,0,0,12"/>
+
+            <ListBox Grid.Row="1" ItemsSource="{Binding Accounts}"
+                     SelectedItem="{Binding SelectedAccount, Mode=TwoWay}"
+                     HorizontalAlignment="Stretch">
+                <!-- Right-click actions mirroring Java HMCL's AccountListPopupMenu. -->
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem x:Name="UseAccountMenuItem" Header="{DynamicResource hmcl.accountspage.020_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.accountspage.022_}"/>
+                        <MenuItem x:Name="CopyAccountInfoMenuItem" Header="{DynamicResource hmcl.accountspage.024_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.accountspage.026_}"/>
+                        <Separator/>
+                        <MenuItem x:Name="PreviewSkinMenuItem" Header="{DynamicResource account.skin.preview}"
+                                  ToolTip.Tip="{DynamicResource account.skin.preview}"/>
+                        <MenuItem x:Name="SetSkinMenuItem" Header="{DynamicResource hmcl.accountspage.028_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.accountspage.030_}"/>
+                        <MenuItem x:Name="ResetSkinMenuItem" Header="{DynamicResource hmcl.accountspage.032_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.accountspage.034_}"/>
+                        <Separator/>
+                        <MenuItem x:Name="RemoveAccountMenuItem" Header="{DynamicResource hmcl.accountspage.036_}"
+                                  ToolTip.Tip="{DynamicResource hmcl.accountspage.038_}"/>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="auth:Account">
+                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="4">
+                            <controls:AccountAvatar Username="{Binding Username}"
+                                                    SkinPath="{Binding SkinPath}"
+                                                    Width="28" Height="28"/>
+                            <TextBlock Text="{Binding Username}" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding AccountType}" Foreground="#888" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Button Grid.Row="2" x:Name="RemoveAccountButton"
+                    Content="{DynamicResource hmcl.accountspage.040_}"
+                    HorizontalAlignment="Left"
+                    Margin="0,12,0,0"
+                    Background="#B0413E" Foreground="White"
+                    Padding="16,8"/>
+        </Grid>
+    </Grid>
+</UserControl>

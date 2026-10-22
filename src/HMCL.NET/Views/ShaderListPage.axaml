@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:addon="clr-namespace:HMCLCore.NET.Addon;assembly=HMCLCore.NET"
+             xmlns:util="clr-namespace:HMCL.NET.Util"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="500"
+             x:DataType="vm:MainWindowViewModel"
+             x:Class="HMCL.NET.Views.ShaderListPage" Background="{DynamicResource HMCL.PageBackground}">
+
+    <DockPanel>
+        <!-- Toolbar, mirroring Java HMCL's shader pack list toolbar. -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+            <TextBlock Text="{DynamicResource hmcl.shaderlistpage.464_}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button x:Name="RefreshButton" Content="{DynamicResource button.refresh}" Padding="14,6" Margin="16,0,0,0"/>
+            <Button x:Name="AddButton" Content="{DynamicResource hmcl.shaderlistpage.466_}" Padding="14,6"/>
+            <Button x:Name="EnableButton" Content="{DynamicResource button.enable}" Padding="14,6"/>
+            <Button x:Name="DisableButton" Content="{DynamicResource button.disable}" Padding="14,6"/>
+            <Button x:Name="RemoveButton" Content="{DynamicResource button.delete}" Padding="14,6" Background="#B0413E" Foreground="White"/>
+        </StackPanel>
+
+        <ListBox x:Name="ShaderPackList" DockPanel.Dock="Top"
+                 ItemsSource="{Binding ShaderPacks}"
+                 SelectedItem="{Binding SelectedShaderPack, Mode=TwoWay}"
+                 Height="400" Margin="16,12,16,16">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="addon:DataPack">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4">
+                        <TextBlock Grid.Column="0" Width="52" VerticalAlignment="Center"
+                                   FontWeight="Bold" Foreground="#2B7A2B"
+                                   Text="{Binding Enabled, Converter={x:Static util:BoolToTextConverter.Instance}}"/>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Description}" Foreground="#666"
+                                       FontSize="11" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="{Binding FileName}"
+                                   Foreground="#888" FontSize="11" VerticalAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>

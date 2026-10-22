@@ -5,4 +5,36 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="fNbt" Version="2.1.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+
+    <!-- The renderer of the skins of the players, like the 3D preview of the
+         skins of Java HMCL. It draws the skins with SkiaSharp, so it needs no
+         native rendering context and works inside Avalonia. -->
+    <PackageReference Include="MinecraftSkinRender.Image" Version="1.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\versions.txt" />
+    <EmbeddedResource Include="Resources\version-alias.csv" />
+    <EmbeddedResource Include="Resources\terracotta.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The Java libraries shipped with the launcher, built from the sources
+         of the minecraft/libraries directory of Java HMCL. -->
+    <EmbeddedResource Include="Resources\HMCLMultiMCBootstrap-1.0.jar" />
+    <EmbeddedResource Include="Resources\HMCLTransformerDiscoveryService-1.0.jar" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The tables of the projects of the addons, taken from Java HMCL. -->
+    <EmbeddedResource Include="Resources\addon\mod.csv" />
+    <EmbeddedResource Include="Resources\addon\modpack.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The manifests of the built-in theme packs, taken from Java HMCL. -->
+    <EmbeddedResource Include="Resources\themes\*\manifest.json" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:HMCL.NET.ViewModels"
+             xmlns:terracotta="clr-namespace:HMCLCore.NET.Terracotta;assembly=HMCLCore.NET"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+             x:DataType="vm:MainWindowViewModel"
+             x:Class="HMCL.NET.Views.TerracottaPage" Background="{DynamicResource HMCL.PageBackground}">
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="16">
+            <TextBlock Text="{DynamicResource terracotta}" FontSize="18" FontWeight="Bold"/>
+
+            <!-- The state of the local service. -->
+            <Border Background="{DynamicResource HMCL.PanelBackground}" CornerRadius="6" BorderBrush="{DynamicResource HMCL.BorderBrush}" BorderThickness="1" Padding="12">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{Binding TerracottaStatus}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding TerracottaStatusDescription}"
+                               Foreground="{DynamicResource HMCL.MutedText}" FontSize="12" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="{DynamicResource button.refresh}" Command="{Binding RefreshTerracottaCommand}" Padding="12,6"/>
+                        <Button Content="{DynamicResource terracotta.status.scanning}" Command="{Binding ScanTerracottaCommand}"
+                                IsVisible="{Binding IsTerracottaReady}" Padding="12,6"/>
+                        <Button Content="{DynamicResource terracotta.status.waiting.host.title}" Command="{Binding ScanTerracottaCommand}"
+                                IsVisible="{Binding IsTerracottaReady}" Padding="12,6"/>
+                        <Button Content="{DynamicResource terracotta.status.uninitialized.not_exist.title}" Command="{Binding InstallTerracottaCommand}"
+                                IsVisible="{Binding !IsTerracottaInstalled}" Padding="12,6"/>
+                        <Button x:Name="InstallLocalButton" Content="{DynamicResource terracotta.from_local.title}" Padding="12,6"/>
+                    </StackPanel>
+
+                    <!-- The package of the online component can be downloaded
+                         from a third-party channel and dropped into the page. -->
+                    <TextBlock Text="{Binding TerracottaPackageGuide}"
+                               Foreground="{DynamicResource HMCL.MutedText}" FontSize="12" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- The invitation code of the session hosted by the launcher. -->
+            <Border IsVisible="{Binding HasTerracottaRoomCode}"
+                    Background="#E8F5E9" CornerRadius="6" BorderBrush="#A5D6A7" BorderThickness="1" Padding="12">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="{DynamicResource terracotta.status.host_ok.code}" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{Binding TerracottaRoomCode}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button Content="{DynamicResource terracotta.status.host_ok.code.copy}"
+                                Command="{Binding CopyTerracottaRoomCodeCommand}" Padding="12,6"/>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource terracotta.status.host_ok.desc}"
+                               FontSize="11" Foreground="{DynamicResource HMCL.MutedText}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+
+            <!-- The room the player joins. -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBox Text="{Binding TerracottaRoomName, Mode=TwoWay}" Width="220"
+                         PlaceholderText="{DynamicResource terracotta.status.waiting.guest.prompt.title}"/>
+                <Button Content="{DynamicResource terracotta.status.waiting.guest.title}" Command="{Binding JoinTerracottaCommand}" Padding="12,6"/>
+            </StackPanel>
+
+            <TextBlock Text="{Binding TerracottaDifficulty}" FontSize="12" Foreground="{DynamicResource HMCL.MutedText}"/>
+
+            <!-- The links of the online mode: the feedback form and the logs. -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button x:Name="FeedbackButton" Content="{DynamicResource terracotta.feedback.title}" Padding="12,6"/>
+                <Button x:Name="ExportLogButton" Content="{DynamicResource terracotta.export_log}" Padding="12,6"/>
+            </StackPanel>
+
+            <TextBlock Text="{DynamicResource terracotta.player_list}" FontWeight="Bold"/>
+            <ListBox ItemsSource="{Binding TerracottaProfiles}" Height="140">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="terracotta:TerracottaProfile">
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <TextBlock Text="{DynamicResource terracotta}" FontWeight="Bold"/>
+            <ListBox ItemsSource="{Binding TerracottaNodes}" Height="140"/>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

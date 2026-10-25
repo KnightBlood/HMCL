@@ -11,6 +11,8 @@ use std::path::{Path, PathBuf};
 
 use flate2::read::DeflateDecoder;
 
+use crate::error::Error;
+
 /// The signature of the end of the directory of an archive.
 const DIRECTORY_END_SIGNATURE: u32 = 0x0605_4b50;
 /// The signature of the locator of the directory of a large archive.
@@ -45,6 +47,15 @@ impl std::error::Error for ZipError {
         match self {
             Self::Io(error) => Some(error),
             Self::Malformed(_) => None,
+        }
+    }
+}
+
+impl From<ZipError> for Error {
+    fn from(error: ZipError) -> Self {
+        match error {
+            ZipError::Io(source) => Error::io_without_path(source),
+            ZipError::Malformed(reason) => Error::invalid_format(PathBuf::new(), reason),
         }
     }
 }

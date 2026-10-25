@@ -312,6 +312,78 @@ impl DownloadProvider {
         }
     }
 
+    /// Returns the addresses the versions of the loader of Quilt are read
+    /// from, and the addresses the versions of the game Quilt supports are
+    /// read from.
+    pub fn quilt_version_list_candidates(&self) -> FabricVersionListCandidates {
+        FabricVersionListCandidates {
+            loader: self.pair_candidates(
+                self.version_list_source,
+                QUILT_LOADER_META_URL.to_string(),
+                format!("{}{QUILT_MIRROR_META_ROOT}/versions/loader", self.bmcl_root),
+            ),
+            game: self.pair_candidates(
+                self.version_list_source,
+                QUILT_GAME_META_URL.to_string(),
+                format!("{}{QUILT_MIRROR_META_ROOT}/versions/game", self.bmcl_root),
+            ),
+        }
+    }
+
+    /// Returns the addresses the versions of the loader of Legacy Fabric are
+    /// read from, and the addresses the versions of the game Legacy Fabric
+    /// supports are read from.
+    ///
+    /// The mirror does not hold the service of Legacy Fabric, so both lists
+    /// are read from the official server.
+    pub fn legacy_fabric_version_list_candidates(&self) -> FabricVersionListCandidates {
+        FabricVersionListCandidates {
+            loader: DownloadCandidates::of(LEGACY_FABRIC_LOADER_META_URL),
+            game: DownloadCandidates::of(LEGACY_FABRIC_GAME_META_URL),
+        }
+    }
+
+    /// Returns the addresses of the metadata a loader of Fabric publishes
+    /// about one of its versions.
+    ///
+    /// The service of Fabric and the service of Quilt both publish the loader
+    /// of a version of the game at `{meta}/{gameVersion}/{loaderVersion}`, so
+    /// the addresses are only read from the official server of Quilt and of
+    /// Legacy Fabric, whose mirror does not exist.
+    pub fn loader_meta_candidates(
+        &self,
+        game_version: &str,
+        loader_version: &str,
+    ) -> DownloadCandidates {
+        self.download_candidates(&[format!(
+            "{FABRIC_LOADER_META_URL}/{game_version}/{loader_version}"
+        )])
+    }
+
+    /// Returns the addresses of the metadata a loader of Quilt publishes about
+    /// one of its versions.
+    pub fn quilt_meta_candidates(
+        &self,
+        game_version: &str,
+        loader_version: &str,
+    ) -> DownloadCandidates {
+        self.download_candidates(&[format!(
+            "{QUILT_LOADER_META_URL}/{game_version}/{loader_version}"
+        )])
+    }
+
+    /// Returns the addresses of the metadata a loader of Legacy Fabric
+    /// publishes about one of its versions.
+    pub fn legacy_fabric_meta_candidates(
+        &self,
+        game_version: &str,
+        loader_version: &str,
+    ) -> DownloadCandidates {
+        self.download_candidates(&[format!(
+            "{LEGACY_FABRIC_LOADER_META_URL}/{game_version}/{loader_version}"
+        )])
+    }
+
     /// Returns the addresses the versions of Cleanroom are read from.
     ///
     /// The list of Cleanroom is not served by Mojang, so the mirror of the list
@@ -420,8 +492,12 @@ impl DownloadProvider {
     }
 }
 
-/// The addresses the versions of a loader that is listed by the service of
-/// Fabric are read from.
+/// The addresses the versions of a loader that is listed by a service the
+/// mirror keeps are read from.
+///
+/// The mirror only holds the versions of Fabric and of Quilt: the service of
+/// Legacy Fabric is not mirrored, so the list of Legacy Fabric is read from the
+/// official server only.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FabricVersionListCandidates {
     /// The addresses the versions of the loader are read from.
@@ -430,6 +506,10 @@ pub struct FabricVersionListCandidates {
     /// from.
     pub game: DownloadCandidates,
 }
+
+/// The address of the mirror the versions of the loader of Quilt are read
+/// from.
+pub const QUILT_MIRROR_META_ROOT: &str = "/quilt-meta/v3";
 
 /// Returns whether a machine that names the time zone and the country of the
 /// player is in the mainland of China.

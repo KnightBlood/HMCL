@@ -18,7 +18,9 @@ pub mod verification;
 pub mod world;
 pub mod world_backup;
 
-pub use component::{AnalyzeError, ComponentAnalyzer, GameComponentType, Mark};
+pub use component::{
+    AnalyzeError, ComponentAnalyzer, GameComponentType, Mark, FORGE_OPTIFINE_MAIN,
+};
 pub use crash_report::{
     analyze, extract_crash_report, find_crash_report, find_keywords_from_crash_report,
     java_version_from_major_version, CrashRuleMatch, Rule,

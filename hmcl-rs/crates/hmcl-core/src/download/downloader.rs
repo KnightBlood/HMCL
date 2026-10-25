@@ -45,6 +45,15 @@ impl<'a> TaskDownloader<'a> {
         self.cache.borrow()
     }
 
+    /// Returns the cache of the downloader for writing the files of the
+    /// servers.
+    ///
+    /// The cache is lent for as long as the caller uses it, so a caller that
+    /// lends the cache does not borrow the downloader again while it is lent.
+    pub fn cache_mut(&self) -> std::cell::RefMut<'_, DefaultCacheRepository> {
+        self.cache.borrow_mut()
+    }
+
     /// Returns the task that downloads a file of a version.
     ///
     /// The file of the game and the libraries are archives that the game

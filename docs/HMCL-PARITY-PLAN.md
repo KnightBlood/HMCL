@@ -202,8 +202,8 @@
 | DL-02 | 客户端 JAR / 库 / 资源索引 / 资源对象 | `download/game/*` | [x] | [~] | P0 |
 | DL-03 | 完整性校验与修复 | `GameVerificationFixTask` | [x] | [~] | P1 |
 | DL-04 | 下载源（Mojang/BMCLAPI/镜像） | `DownloadProviders` | [x] | [x] | P1 |
-| DL-05 | Forge/NeoForge 安装 | `download/forge`, `neoforge` | [x] | [ ] | P0 |
-| DL-06 | Fabric/Quilt/LegacyFabric（含 API） | `download/fabric|quilt|legacyfabric` | [x] | [ ] | P0 |
+| DL-05 | Forge/NeoForge 安装 | `download/forge`, `neoforge` | [x] | [~] | P0 |
+| DL-06 | Fabric/Quilt/LegacyFabric（含 API） | `download/fabric|quilt|legacyfabric` | [x] | [x] | P0 |
 | DL-07 | OptiFine / LiteLoader / Cleanroom | 对应包 | [x] | [ ] | P2 |
 | DL-08 | Java 运行时下载与安装（Mojang/Disco） | `download/java`, `HMCLJavaRepository` | [x] | [ ] | P1 |
 | DL-09 | 下载线程数/并发控制 | `LauncherSettings` | [x] | [~] | P2 |
@@ -1211,6 +1211,36 @@ hmcl-rs/
 - Java 运行时发现与下载。
 - 仓库/实例/清单/库构建/规则/原生库。
 - 验收：CLI 可安装并启动 1.20.1 Fabric 实例。
+
+#### DL-05：Forge/NeoForge 安装（`download/forge.rs`，部分完成）
+- 已实现（纯逻辑层，18 个单测）：
+  - 形态判定 `detect_format`：`install_profile.json` 含 `spec` → Processor（新格式），
+    含 `install` + `versionInfo` → Legacy（旧格式），两者皆无 → 报错
+    （复刻 `ForgeInstallTask.detectForgeInstallerType` 的三分支；Java 只查键存在，
+    故 `{"spec": 0}` 也算新格式）；
+  - NeoForge 分派 `is_neoforge_installer`：`profile == "neoforge"` 直接判定
+    （对应 `NeoForgeInstallTask` 第 148 行），或 `profile == "forge"` 且存在
+    `META-INF/NEOFORGE.RSA`/`install_profile.json` 文本含 `neoforge`（对应第 128 行）；
+  - `replace_tokens`：`{key}`/`'literal'` 转义与替换，未闭合或键缺失报错
+    （对齐 `ForgeNewInstallTask.replaceTokens` 的 `Illegal pattern`）；
+  - `parse_literal`：`{token}`/`'text'`/`[artifact]`/普通文本四种形式，
+    `[artifact]` 经 `InstallerLayout.artifact_file()` 解析成库文件路径
+    （`libraries/` + `/` 换成系统分隔符，等价 Java `getArtifactFile(...).toString()`）；
+  - `ProcessorOptions::parse`：`--name value` 单词表，未命名单词被丢弃；
+  - `data_tokens`：把 installer 内 `data.<KEY>.client` 指明的文件拷到
+    `temporary/<DATA_KEY>`（键内 `/`/`\` 换成 `_`）；
+  - `copy_installer_libraries`：把 `maven/` 下的库与 `profile.path` 主 jar 拷进库目录；
+  - `profile_libraries`/`profile_name`/`read_profile_keys`/`read_processor_profile`；
+  - `resolve_processor`：解析任务 jar/classpath/args/outputs 的文件路径；
+  - `is_mojang_mappings_task`/`mojang_mappings_target`：识别 `DOWNLOAD_MOJMAPS` 任务；
+  - `modify_version`/`modify_neoforge_old_version`/`modify_neoforge_new_version`；
+  - `processor_patch`/`legacy_patch`（优先级 30000）/`neoforge_patch_id`；
+  - `check_launch_wrapper`：仅 `1.13 <= 游戏版本` 时校验主类在
+    `FORGE_OPTIFINE_MAIN` 中（对齐 `ForgeInstallTask.execute` 的判据）；
+  - `digest_of`（SHA-1）。
+- 尚未实现：外部 Java 进程执行、vars 组装（`SIDE`/`MINECRAFT_JAR`/`MINECRAFT_VERSION`/
+  `ROOT`/`INSTALLER`/`LIBRARY_DIR`）、输出 SHA-1 校验回环、旧格式 universal jar 解包、
+  `checkCleanroomCompatibility`；`install_loader` 尚无应用层入口。
 
 ### 阶段 R3：启动与整合包（2–3 周）
 - 命令构建、进程/流泵/退出等待。

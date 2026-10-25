@@ -23,6 +23,16 @@ pub const FORGE_BOOTSTRAP_MAIN: &str = "net.minecraftforge.bootstrap.ForgeBootst
 /// The main class of the versions started through the bootstrap of NeoForge.
 pub const NEO_FORGE_BOOTSTRAP_MAIN: &str = "net.neoforged.fml.startup.Client";
 
+/// The main classes of the versions Forge and OptiFine may be installed into.
+pub const FORGE_OPTIFINE_MAIN: [&str; 6] = [
+    VANILLA_MAIN,
+    LAUNCH_WRAPPER_MAIN,
+    MOD_LAUNCHER_MAIN,
+    BOOTSTRAP_LAUNCHER_MAIN,
+    FORGE_BOOTSTRAP_MAIN,
+    NEO_FORGE_BOOTSTRAP_MAIN,
+];
+
 /// The tweak classes of Forge, in the order of the versions of the game.
 pub const FORGE_TWEAKERS: [&str; 3] = [
     "net.minecraftforge.legacy._1_5_2.LibraryFixerTweaker",

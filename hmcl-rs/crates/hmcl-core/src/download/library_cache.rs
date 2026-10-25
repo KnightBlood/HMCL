@@ -178,7 +178,7 @@ impl DefaultCacheRepository {
 
         // The libraries of the previous launchers were kept in the shared
         // directory of the libraries.
-        let path = library_path(library)?;
+        let path = library_path_of(library);
         let jar = self.libraries_directory.join(path);
         if !jar.is_file() {
             return None;
@@ -329,6 +329,28 @@ fn read_index(path: &Path) -> BTreeMap<String, Vec<LibraryIndex>> {
     libraries
 }
 
+/// Returns the path of a library in the directory of the libraries.
+///
+/// The versions of the game tell the path of the files of their libraries; a
+/// library that tells none is kept where the repositories of Java keep it,
+/// which is what its coordinates name.
+pub fn library_path_of(library: &Library) -> String {
+    if let Some(path) = library
+        .downloads
+        .as_ref()
+        .and_then(|downloads| downloads.artifact.as_ref())
+        .and_then(|artifact| artifact.path.clone())
+    {
+        return path;
+    }
+
+    library
+        .artifact()
+        .ok()
+        .map(|artifact| artifact.path())
+        .unwrap_or_else(|| library.name.replace(':', "/"))
+}
+
 /// Returns the digest of a library the version tells.
 fn library_sha1(library: &Library) -> Option<String> {
     library
@@ -338,20 +360,6 @@ fn library_sha1(library: &Library) -> Option<String> {
         .as_ref()?
         .sha1()
         .map(str::to_string)
-}
-
-/// Returns the path of a library in the directory of the libraries.
-fn library_path(library: &Library) -> Option<String> {
-    if let Some(path) = library
-        .downloads
-        .as_ref()
-        .and_then(|downloads| downloads.artifact.as_ref())
-        .and_then(|artifact| artifact.path.clone())
-    {
-        return Some(path);
-    }
-
-    library.artifact().ok().map(|artifact| artifact.path())
 }
 
 /// Returns whether a file of a library is the library the versions of the game

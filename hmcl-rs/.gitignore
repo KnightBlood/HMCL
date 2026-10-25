@@ -1,1 +1,5 @@
 /target/
+
+# The local home of the launcher, which is created in the directory the
+# launcher is started from.
+/.hmcl/

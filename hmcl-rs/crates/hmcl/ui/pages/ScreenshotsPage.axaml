@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/ferroui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.ViewModels"
+             xmlns:game="clr-namespace:HMCL.Game"
+             x:DataType="vm:MainWindowViewModel" Background="{DynamicResource HMCL.PageBackground}">
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+            <TextBlock Text="{DynamicResource screenshots.manage}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+            <ComboBox x:Name="FilterBox" Width="120" VerticalAlignment="Center">
+                <ComboBoxItem Tag="All">全部</ComboBoxItem>
+                <ComboBoxItem Tag="Today">今天</ComboBoxItem>
+                <ComboBoxItem Tag="ThisWeek">本周</ComboBoxItem>
+                <ComboBoxItem Tag="ThisMonth">本月</ComboBoxItem>
+            </ComboBox>
+            <Button x:Name="RefreshButton" Content="{DynamicResource button.refresh}" Padding="12,6" VerticalAlignment="Center"/>
+            <Button x:Name="OpenDirectoryButton" Content="{DynamicResource hmcl.screenshotspage.254_}" Padding="12,6" VerticalAlignment="Center"/>
+            <Button x:Name="SelectAllButton" Content="{DynamicResource button.select_all}" Padding="12,6" VerticalAlignment="Center"/>
+            <TextBlock x:Name="StatusText" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ListBox x:Name="ScreenshotList" DockPanel.Dock="Top"
+                 ItemsSource="{Binding Screenshots}" Margin="16,12,16,16">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemWidth="180" Margin="0,4"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="CopyMenuItem" Header="{DynamicResource button.copy}"
+                              ToolTip.Tip="{DynamicResource hmcl.screenshotspage.256_}"/>
+                    <MenuItem x:Name="SetBackgroundMenuItem" Header="{DynamicResource hmcl.screenshotspage.258_}"
+                              ToolTip.Tip="{DynamicResource hmcl.screenshotspage.260_}"/>
+                    <Separator/>
+                    <MenuItem x:Name="DeleteMenuItem" Header="{DynamicResource button.delete}"
+                              ToolTip.Tip="{DynamicResource hmcl.screenshotspage.262_}"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="game:ScreenshotInfo">
+                    <StackPanel Spacing="4" Margin="4">
+                        <Border Background="#EEE" Height="100">
+                            <Image Source="{Binding Path}" Stretch="Uniform"/>
+                        </Border>
+                        <TextBlock Text="{Binding FileName}" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding TakenAtText}" FontSize="11" Foreground="{DynamicResource HMCL.MutedText}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>

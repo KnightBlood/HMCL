@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/ferroui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.ViewModels"
+             x:DataType="vm:MainWindowViewModel" Background="{DynamicResource HMCL.PageBackground}">
+
+    <DockPanel>
+        <!-- Header -->
+        <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="16">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="{Binding SelectedInstance.Profile}" FontSize="20" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedInstance.Version}" FontSize="14" Foreground="{DynamicResource HMCL.MutedText}"/>
+                <TextBlock Text="|" FontSize="14" Foreground="{DynamicResource HMCL.MutedText}"/>
+                <TextBlock Text="{Binding SelectedInstance.Loader}" FontSize="14" Foreground="#007ACC" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBlock Text="{Binding SelectedInstance.GameDirectory}" FontSize="14" Foreground="{DynamicResource HMCL.MutedText}" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <Rectangle DockPanel.Dock="Top" Height="1" Fill="#CCCCCC"/>
+
+        <!-- Tabs -->
+        <TabControl x:Name="InstanceTabs" DockPanel.Dock="Top" Margin="16,0">
+            <TabItem Header="{DynamicResource settings}"/>
+            <TabItem Header="{DynamicResource hmcl.gameinstancepage.068_}"/>
+            <TabItem Header="{DynamicResource curse.category.4464}"/>
+            <TabItem Header="{DynamicResource resourcepack}"/>
+            <TabItem Header="{DynamicResource curse.category.5193}"/>
+            <TabItem Header="{DynamicResource hmcl.gameinstancepage.070_}"/>
+            <TabItem Header="{DynamicResource hmcl.gameinstancepage.072_}"/>
+            <TabItem Header="{DynamicResource hmcl.gameinstancepage.074_}"/>
+            <TabItem Header="{DynamicResource hmcl.gameinstancepage.076_}"/>
+        </TabControl>
+
+        <!-- Content area -->
+        <ContentControl x:Name="PageHost" Margin="16">
+            <StackPanel Spacing="12">
+                <TextBlock Text="{DynamicResource instance.settings}" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="{DynamicResource hmcl.gameinstancepage.078_}" Foreground="{DynamicResource HMCL.MutedText}"/>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="OpenGameSettingsButton" Content="{DynamicResource Instance.Settings}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource Instance.Settings}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="UpdateVersionButton" Content="{DynamicResource hmcl.gameinstancepage.080_}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource hmcl.gameinstancepage.082_}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="GenerateLaunchScriptButton" Content="{DynamicResource instance.launch_script}" Margin="0"/>
+                    <Button x:Name="TestLaunchButton" Content="{DynamicResource hmcl.gameinstancepage.084_}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource hmcl.gameinstancepage.086_}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="ExportModpackButton" Content="{DynamicResource Instance.ExportModpack}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource hmcl.gameinstancepage.088_}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="OpenModsButton" Content="{DynamicResource Instance.Mods}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource hmcl.gameinstancepage.090_}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="OpenWorldsButton" Content="{DynamicResource Instance.Worlds}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource hmcl.gameinstancepage.092_}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+                    <Button x:Name="OpenNbtEditorButton" Content="{DynamicResource hmcl.gameinstancepage.094_}" Margin="0"/>
+                    <TextBlock Text="{DynamicResource hmcl.gameinstancepage.096_}" Foreground="{DynamicResource HMCL.MutedText}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </ContentControl>
+    </DockPanel>
+
+</UserControl>

@@ -1,0 +1,18 @@
+# Build configuration for the HMCL Rust workspace.
+#
+# The sandbox's `cl.exe` (MSVC) is blocked by the environment, so the C/C++
+# toolchain of the launcher is routed through LLVM's `clang-cl`, which targets
+# `x86_64-pc-windows-msvc` and compiles Skia/HarfBuzz without issue. The Rust
+# linker stays at the default `link.exe`, which works.
+[env]
+# The C/C++ compiler and the bindgen/clang runtime used by the native crates.
+CC = "D:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+CXX = "D:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\Llvm\\x64\\bin\\clang-cl.exe"
+LIBCLANG_PATH = "D:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\Llvm\\x64\\bin"
+
+[http]
+# The user-level `~/.cargo/config.toml` points `[http] proxy` at
+# `127.0.0.1:10808`, which is not listening in this environment and makes every
+# registry request fail. The mirror itself is reachable directly, so override
+# the proxy with an empty value here (project config wins over user config).
+proxy = ""

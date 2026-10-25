@@ -16,3 +16,9 @@ hmcl-core.workspace = true
 # theme by default; `xaml` adds the run-time XAML loader the main window is
 # loaded with.
 ferroui = { workspace = true, features = ["xaml"] }
+
+# The client that opens the connections of the launcher. `tls` brings rustls
+# with the root certificates of the web built in, so the launcher does not
+# depend on the store of the system; `socks-proxy` lets the player use a SOCKS
+# proxy, which the settings of the launcher name.
+ureq = { version = "2", default-features = false, features = ["tls", "gzip", "socks-proxy"] }

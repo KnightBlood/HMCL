@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/ferroui"
+             xmlns:util="clr-namespace:HMCL.Util"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.ViewModels"
+             x:DataType="vm:MainWindowViewModel">
+
+    <!-- Mirrors Java HMCL MainPage: the launch controls at the bottom-right,
+         with the wallpaper of the launcher behind them. -->
+    <Grid>
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left"
+                    Margin="24" Spacing="4" IsVisible="False">
+            <TextBlock Text="HMCL.NET" FontSize="20" FontWeight="Bold"/>
+            <TextBlock Text="{Binding SelectedInstance.Id}" FontSize="13" Foreground="#666"/>
+        </StackPanel>
+
+        <ProgressBar IsIndeterminate="{Binding IsLaunching}"
+                     IsVisible="{Binding IsLaunching, Mode=OneWay}"
+                     VerticalAlignment="Top" Height="4" Margin="24,8,24,0"/>
+
+        <!-- Update bubble (top-right), mirroring Java HMCL's update notice. -->
+        <Border IsVisible="{Binding ShowUpdateBubble, Mode=OneWay}"
+                VerticalAlignment="Top" HorizontalAlignment="Right"
+                Margin="24" Padding="12"
+                Background="{DynamicResource HMCL.CardBackground}" CornerRadius="6"
+                BoxShadow="0 2 8 0 #33000000">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Grid.Column="0" Text="⬆" FontSize="18"
+                           Foreground="{DynamicResource HMCL.AccentBackground}" VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
+                <TextBlock Grid.Column="1" Text="{Binding LatestVersionText}"
+                           FontWeight="Bold" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                    <Button Content="{DynamicResource hmcl.launchpage.198_}" Command="{Binding DownloadUpdateCommand}"
+                            Padding="10,4" Background="{DynamicResource HMCL.AccentBackground}"
+                            Foreground="{DynamicResource HMCL.AccentForeground}"
+                            IsVisible="{Binding LatestUpdate, Converter={x:Static util:NullToBoolConverter.Instance}, Mode=OneWay}"/>
+                    <Button Content="{DynamicResource button.view}" Command="{Binding OpenUpdatePageCommand}"
+                            Padding="10,4" Background="{DynamicResource HMCL.AccentBackground}"
+                            Foreground="{DynamicResource HMCL.AccentForeground}"/>
+                    <Button Content="✕" Command="{Binding DismissUpdateBubbleCommand}"
+                            Padding="8,4" Background="Transparent"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- The hardware of the machine, shown at the bottom-left. -->
+        <TextBlock Text="{Binding HardwareDescription}"
+                   FontSize="11" Foreground="#777777"
+                   VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                   Margin="24" LineHeight="16"/>
+
+        <!-- The launch button of Java HMCL: the button that starts the game and
+             the button that opens the menu of the instances. -->
+        <StackPanel Orientation="Horizontal" Spacing="0"
+                    VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    Margin="24">
+            <Button Command="{Binding LaunchCommand}"
+                    Background="{DynamicResource HMCL.AccentBackground}"
+                    Foreground="{DynamicResource HMCL.AccentForeground}"
+                    CornerRadius="4,0,0,4"
+                    MinWidth="180" Height="55" Padding="16,8">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource instance.launch}" FontSize="16"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding SelectedInstance.Id}" FontSize="12"
+                               HorizontalAlignment="Center" Opacity="0.85"
+                               IsVisible="{Binding SelectedInstance, Converter={x:Static util:NullToBoolConverter.Instance}, Mode=OneWay}"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="InstanceMenuButton"
+                    Background="{DynamicResource HMCL.AccentBackground}"
+                    Foreground="{DynamicResource HMCL.AccentForeground}"
+                    CornerRadius="0,4,4,0"
+                    Width="34" Height="55" Padding="0"
+                    ToolTip.Tip="{DynamicResource instance.switch}">
+                <Path Data="M7,10L12,15L17,10H7Z"
+                      Fill="{DynamicResource HMCL.AccentForeground}" Width="20" Height="20"
+                      Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
+            <Button Command="{Binding StopGameCommand}"
+                    Content="{DynamicResource hmcl.launchpage.200_}"
+                    Margin="8,0,0,0"
+                    Padding="14,12"
+                    ToolTip.Tip="{DynamicResource hmcl.launchpage.202_}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

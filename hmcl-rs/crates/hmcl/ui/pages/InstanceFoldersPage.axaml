@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/ferroui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:HMCL.Views">
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+            <TextBlock Text="{DynamicResource hmcl.instancefolderspage.112_}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ListBox x:Name="FolderList" DockPanel.Dock="Top" Height="400" Margin="16,12,16,16">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="views:FolderEntry">
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4">
+                        <Button Content="{DynamicResource hmcl.instancefolderspage.114_}" Width="60" VerticalAlignment="Center"
+                                CommandParameter="{Binding Path}"/>
+                        <TextBlock Text="{Binding Name}" Classes="item-title" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Path}" Classes="item-subtitle" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+
+</UserControl>

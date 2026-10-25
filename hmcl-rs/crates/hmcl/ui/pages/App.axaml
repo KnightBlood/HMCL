@@ -1,0 +1,59 @@
+<Application xmlns="https://github.com/ferroui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:util="clr-namespace:HMCL.Util"
+             xmlns:controls="clr-namespace:HMCL.Controls"
+             xmlns:avalonia="using:FerroUI.Controls"
+             RequestedThemeVariant="Default">
+    <Application.Styles>
+        <FluentTheme />
+        <!-- Global interface font, driven by the appearance settings. -->
+        <Style Selector="Window">
+            <Setter Property="FontFamily" Value="{DynamicResource HMCL.FontFamily}"/>
+            <Setter Property="FontSize" Value="{DynamicResource HMCL.FontSize}"/>
+        </Style>
+        <!-- The buttons show a background when the mouse is over them, so that
+             they can be found on the wallpaper of the launcher. -->
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#22808080"/>
+        </Style>
+        <Style Selector="Button:pointerover:pressed">
+            <Setter Property="Background" Value="#40808080"/>
+        </Style>
+        <!-- The buttons that cannot be used stay visible, but they are dimmed. -->
+        <Style Selector="Button:disabled">
+            <Setter Property="Opacity" Value="0.55"/>
+            <Setter Property="Foreground" Value="#888888"/>
+        </Style>
+    </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--
+                The localized strings are not declared here: they are loaded at
+                runtime from the dictionaries in the Strings folder, so that the
+                language can be changed without restarting the launcher. See
+                HMCL.NET.Util.LanguageManager.
+            -->
+            <util:NullToBoolConverter x:Key="NullToBoolConverter"/>
+            <util:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
+            <util:BoolToTextConverter x:Key="BoolToTextConverter"/>
+            <util:VersionTypeConverter x:Key="VersionTypeConverter"/>
+            <FontFamily x:Key="HMCL.FontFamily">$Default</FontFamily>
+            <x:Double x:Key="HMCL.FontSize">13</x:Double>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <!-- The icon of the launcher shown in the notification area. -->
+    <avalonia:TrayIcon.Icons>
+        <avalonia:TrayIcons>
+            <avalonia:TrayIcon Icon="/Assets/hmcl.ico" ToolTipText="HMCL.NET"
+                               IsVisible="True" Clicked="OnTrayIconClicked">
+                <avalonia:TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="显示主界面" />
+                        <NativeMenuItem Header="退出" />
+                    </NativeMenu>
+                </avalonia:TrayIcon.Menu>
+            </avalonia:TrayIcon>
+        </avalonia:TrayIcons>
+    </avalonia:TrayIcon.Icons>
+</Application>

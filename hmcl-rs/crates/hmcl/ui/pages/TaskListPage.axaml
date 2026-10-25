@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/ferroui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.ViewModels"
+             x:DataType="vm:TaskListViewModel" Background="{DynamicResource HMCL.PageBackground}">
+
+    <!-- Mirrors Java HMCL TaskListPane: one entry per running task with its progress. -->
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="16">
+        <TextBlock Grid.Row="0" Text="{DynamicResource hmcl.tasklistpage.468_}" FontSize="18" FontWeight="Bold"
+                   Margin="0,0,0,12"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+            <Button x:Name="CancelAllButton" Content="{DynamicResource hmcl.tasklistpage.470_}" Padding="14,6"/>
+            <Button x:Name="ClearFinishedButton" Content="{DynamicResource hmcl.tasklistpage.472_}" Padding="14,6"/>
+            <ProgressBar IsIndeterminate="{Binding IsBusy}" Width="120" Height="4"
+                         VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding RunningCount, StringFormat='Running {0} tasks'}"
+                       VerticalAlignment="Center" Foreground="#555"/>
+        </StackPanel>
+
+        <ListBox Grid.Row="2" ItemsSource="{Binding Tasks}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:TaskItemViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="4" RowDefinitions="Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding StatusIcon}"
+                                   Width="18" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}"
+                                   FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ProgressText}"
+                                   Foreground="#555" VerticalAlignment="Center" Margin="8,0,0,0"/>
+
+                        <ProgressBar Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                     Margin="0,4,0,0" Height="4"
+                                     Minimum="0" Maximum="100"
+                                     Value="{Binding ProgressValue, Mode=OneWay}"
+                                     IsIndeterminate="{Binding IsIndeterminate}"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                   Text="{Binding ErrorMessage}" Foreground="#A83030"
+                                   FontSize="11" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="3" Text="{DynamicResource hmcl.tasklistpage.474_}"
+                   FontSize="11" Foreground="#888" Margin="0,12,0,0"/>
+    </Grid>
+</UserControl>

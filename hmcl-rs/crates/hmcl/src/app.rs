@@ -1,12 +1,14 @@
 //! The application class of HMCL.
 //!
-//! The theme is installed here; the window itself is described by the XAML
-//! document in `ui/MainWindow.xaml` and loaded by the run-time loader, so this
-//! class holds no layout code.
+//! The theme and the resources are installed here; the window itself is
+//! described by the XAML document in `ui/MainWindow.xaml` and loaded by the
+//! run-time loader, so this class holds no layout code.
 
 use ferroui::prelude::*;
 use hmcl_core::metadata;
 
+use crate::context;
+use crate::resources;
 use crate::ui;
 
 /// The FerroUI application of HMCL.
@@ -35,6 +37,11 @@ impl ApplicationImpl for HmclApplication {
         Self::parent_initialize(this);
         this.set_name(Some(metadata::TITLE.to_string()));
         this.styles().add(FluentTheme::new().as_style());
+
+        // The texts of the launcher and the colors of the panels are the
+        // resources of the application, so every page finds them.
+        let launcher = context::launcher();
+        this.set_resources(resources::create(launcher.i18n()));
     }
 
     fn on_framework_initialization_completed(this: &Self) {
@@ -43,7 +50,8 @@ impl ApplicationImpl for HmclApplication {
             .as_ref()
             .and_then(|lifetime| lifetime.as_classic_desktop_style_application_lifetime())
         {
-            desktop.set_main_window(Some(ui::create_main_window()));
+            let launcher = context::launcher();
+            desktop.set_main_window(Some(ui::create_main_window(launcher)));
         }
 
         Self::parent_on_framework_initialization_completed(this);

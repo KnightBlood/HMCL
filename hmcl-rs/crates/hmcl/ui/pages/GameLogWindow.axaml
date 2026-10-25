@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/ferroui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:HMCL.ViewModels"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{DynamicResource hmcl.gamelogwindow.098_}" Width="820" Height="480"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- Mirrors Java HMCL's standalone LogWindow. -->
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBlock Grid.Row="0" Text="{Binding StatusMessage}"
+                   Margin="12,8" FontSize="12" Foreground="#555"/>
+
+        <!-- The causes of the crash of the game, like the crash window of
+             Java HMCL. -->
+        <Border Grid.Row="1" IsVisible="{Binding HasCrashCauses}"
+                Margin="12,0,12,8" Padding="10" CornerRadius="6"
+                Background="#FFF3E0" BorderBrush="#FFCC80" BorderThickness="1">
+            <StackPanel Spacing="4">
+                <TextBlock Text="{DynamicResource game.crash.info}" FontWeight="Bold"/>
+                <ItemsControl ItemsSource="{Binding CrashCauses}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <ListBox Grid.Row="2" ItemsSource="{Binding GameLines}"
+                 FontFamily="{Binding LogFontFamily}" FontSize="{Binding LogFontSize}" Margin="8,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock Text="{Binding}" TextWrapping="NoWrap"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8"
+                    HorizontalAlignment="Right" Margin="12">
+            <Button x:Name="ExportLogButton" Content="{DynamicResource hmcl.gamelogwindow.100_}" Padding="16,6"/>
+            <Button x:Name="DumpButton" Content="{DynamicResource game.dump}" Padding="16,6"/>
+            <Button Content="{DynamicResource hmcl.gamelogwindow.102_}" Command="{Binding StopGameCommand}"
+                    Background="#A83030" Foreground="White" Padding="16,6"/>
+        </StackPanel>
+    </Grid>
+</Window>

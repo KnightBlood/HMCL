@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/ferroui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:HMCL.ViewModels"
+        xmlns:game="clr-namespace:HMCL.Game"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{DynamicResource world.manage}" Width="640" Height="460"
+        WindowStartupLocation="CenterOwner">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+            <Button x:Name="RefreshButton" Content="{DynamicResource button.refresh}" Width="80"/>
+            <Button x:Name="InfoButton" Content="{DynamicResource world.info}" Width="90"/>
+            <Button x:Name="DuplicateButton" Content="{DynamicResource world.duplicate}" Width="100"/>
+            <Button x:Name="BackupListButton" Content="{DynamicResource world.backup}" Width="100"/>
+            <Button x:Name="BackupButton" Content="{DynamicResource hmcl.worldlistwindow.492_}" Width="120"/>
+            <Button x:Name="ExportButton" Content="{DynamicResource hmcl.worldlistwindow.494_}" Width="120"/>
+            <Button x:Name="ImportButton" Content="{DynamicResource hmcl.worldlistwindow.496_}" Width="100"/>
+            <Button x:Name="DeleteButton" Content="{DynamicResource hmcl.worldlistwindow.498_}" Width="120"/>
+        </StackPanel>
+
+        <ListBox x:Name="WorldList" Grid.Row="1" ItemsSource="{Binding Worlds}"
+                 SelectedItem="{Binding SelectedWorld, Mode=TwoWay}"
+                 HorizontalAlignment="Stretch">
+            <!-- Right-click actions mirroring Java HMCL's WorldListPage menu. -->
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="WorldInfoMenuItem" Header="{DynamicResource world.info}"
+                              ToolTip.Tip="{DynamicResource world.info}"/>
+                    <MenuItem x:Name="DuplicateWorldMenuItem" Header="{DynamicResource world.duplicate}"
+                              ToolTip.Tip="{DynamicResource world.duplicate}"/>
+                    <MenuItem x:Name="BackupWorldMenuItem" Header="{DynamicResource hmcl.worldlistwindow.500_}"
+                              ToolTip.Tip="{DynamicResource hmcl.worldlistwindow.502_}"/>
+                    <MenuItem x:Name="ExportWorldMenuItem" Header="{DynamicResource hmcl.worldlistwindow.504_}"
+                              ToolTip.Tip="{DynamicResource hmcl.worldlistwindow.506_}"/>
+                    <Separator/>
+                    <MenuItem x:Name="DeleteWorldMenuItem" Header="{DynamicResource hmcl.worldlistwindow.508_}"
+                              ToolTip.Tip="{DynamicResource hmcl.worldlistwindow.510_}"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="game:WorldInfo">
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="4">
+                        <TextBlock Text="{Binding DisplayName}" FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding SizeText}" Foreground="#666"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text=" · " Foreground="#666" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding LastModified, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                   Foreground="#666" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource world.locked}" Foreground="#A83030"
+                                   VerticalAlignment="Center" IsVisible="{Binding InUse}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock x:Name="StatusText" Grid.Row="2"
+                   Foreground="#888" FontSize="12" Margin="0,8,0,0"/>
+    </Grid>
+</Window>

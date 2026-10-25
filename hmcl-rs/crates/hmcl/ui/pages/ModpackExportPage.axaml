@@ -1,0 +1,76 @@
+<UserControl xmlns="https://github.com/ferroui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HMCL.ViewModels"
+             x:DataType="vm:ModpackExportWizardViewModel" Background="{DynamicResource HMCL.PageBackground}">
+
+    <!-- Mirrors Java HMCL's export wizard: the type of the pack, the information of its
+         manifest and the files of the instance it carries, all bound to one view model. -->
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto" Margin="16">
+
+        <!-- Step 1: the type of the modpack. -->
+        <StackPanel Grid.Row="0" Spacing="6" Margin="0,0,0,16">
+            <TextBlock Text="导出类型" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <RadioButton x:Name="TypeMcbbs" Content="MCBBS" GroupName="ExportType"
+                             IsChecked="{Binding IsMcbbs, Mode=TwoWay}"/>
+                <RadioButton x:Name="TypeServer" Content="服务端 (Server)" GroupName="ExportType"
+                             IsChecked="{Binding IsServer, Mode=TwoWay}"/>
+                <RadioButton x:Name="TypeModrinth" Content="Modrinth" GroupName="ExportType"
+                             IsChecked="{Binding IsModrinth, Mode=TwoWay}"/>
+            </StackPanel>
+            <TextBlock Text="MCBBS/Modrinth 把模组同步到清单；服务端写 HMCL 服务端清单。选中的类型决定清单的格式。"
+                       FontSize="11" Foreground="#888" Margin="0,4,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- Step 2: the information of the manifest. -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,16">
+            <TextBlock Text="整合包信息" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+            <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0,0,0,4">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="名称：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, Mode=TwoWay}" Margin="8,0,0,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="版本：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Version, Mode=TwoWay}" Margin="8,0,0,0"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="作者：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Author, Mode=TwoWay}" Margin="8,0,0,0"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="网址：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Url, Mode=TwoWay}" Margin="8,0,0,0"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="文件 API：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding FileApi, Mode=TwoWay}" Margin="8,0,0,0"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="最小内存（MiB）：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MinMemory, Mode=TwoWay}" Margin="8,0,0,0"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="说明：" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Description, Mode=TwoWay}" Margin="8,0,0,0" Height="72"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Step 3: the files of the instance and the path of the archive. -->
+        <StackPanel Grid.Row="2" Spacing="6" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="输出：" VerticalAlignment="Center"/>
+                <TextBox x:Name="ExportPath" Text="{Binding ExportPath, Mode=TwoWay}" Width="360" Margin="8,0,0,0"/>
+                <CheckBox x:Name="IncludeOptional" Content="包含被禁用的模组" IsChecked="{Binding IncludeOptional, Mode=TwoWay}"
+                          Margin="16,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,8,0,8">
+                <Button x:Name="SelectAllButton" Content="全选" Padding="10,4"/>
+                <Button x:Name="SelectNoneButton" Content="全不选" Padding="10,4" Margin="8,0,0,0"/>
+            </StackPanel>
+            <ListBox x:Name="FileList" ItemsSource="{Binding Files}" Height="300" Margin="0,0,0,8">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ModpackFileEntryViewModel">
+                        <Grid ColumnDefinitions="Auto,*" Margin="0,2">
+                            <CheckBox Grid.Column="0" IsChecked="{Binding IsIncluded, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <!-- Finish: writes the archive. -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+            <TextBlock x:Name="FinishStatus" Foreground="#555" FontSize="11" VerticalAlignment="Center" Margin="0,0,12,0"/>
+            <Button x:Name="FinishButton" Content="导出整合包" Padding="16,6" IsEnabled="{Binding CanFinish}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

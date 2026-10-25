@@ -1,0 +1,10 @@
+<Window xmlns="https://github.com/ferroui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:HMCL.Views"
+        Title="Hello Minecraft! Launcher v3.16.4"
+        Width="1000" Height="620"
+        MinWidth="760" MinHeight="480"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="40">
+    <views:MainView x:Name="RootView" />
+</Window>
